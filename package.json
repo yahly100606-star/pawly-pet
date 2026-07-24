@@ -1,0 +1,19 @@
+{
+  "name": "pawly-pet",
+  "version": "1.0.0",
+  "description": "Pet grooming & care essentials for dogs and cats — vet-approved gear, a calm bathtime, happy paws. Pawly is a custom Shopify theme, built to Dawn (Online Store 2.0) conventions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yahly100606-star/pawly-pet.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "framer-motion": "^12.42.2"
+  }
+}
