@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Pawly design tokens — shadcn CSS variable layer
+   Puppy Orange primary, Sky Pup Blue accent, charcoal on off-white. */
+
+@layer base {
+  :root {
+    /* Page */
+    --background: 210 17% 98%;        /* #F8F9FA off-white */
+    --foreground: 0 0% 10%;           /* #1A1A1A charcoal */
+
+    /* Surfaces */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+
+    /* Brand */
+    --primary: 12 100% 67%;           /* #FF7A59 Puppy Orange */
+    --primary-foreground: 0 0% 100%;
+    --accent: 199 91% 64%;            /* #4FC3F7 Sky Pup Blue */
+    --accent-foreground: 0 0% 10%;
+
+    /* Neutrals */
+    --secondary: 210 17% 94%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 210 17% 94%;
+    --muted-foreground: 0 0% 40%;
+
+    /* System */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 14% 89%;
+    --input: 210 14% 89%;
+    --ring: 12 100% 67%;              /* focus ring in Puppy Orange */
+
+    --radius: 1rem;                   /* Pawly is round & friendly */
+  }
+
+  .dark {
+    --background: 0 0% 8%;
+    --foreground: 210 17% 98%;
+    --card: 0 0% 12%;
+    --card-foreground: 210 17% 98%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 210 17% 98%;
+    --primary: 12 100% 67%;
+    --primary-foreground: 0 0% 100%;
+    --accent: 199 91% 64%;
+    --accent-foreground: 0 0% 10%;
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 210 17% 98%;
+    --muted: 0 0% 16%;
+    --muted-foreground: 210 10% 65%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 12 100% 67%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+    /* keep anchored sections clear of the sticky navbar */
+    scroll-padding-top: 5rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}

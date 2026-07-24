@@ -1,3 +1,12 @@
 node_modules/
 npm-debug.log*
 .DS_Store
+
+# next.js
+/.next/
+/out/
+*.tsbuildinfo
+next-env.d.ts
+
+# env files
+.env*.local
