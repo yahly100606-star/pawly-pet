@@ -137,7 +137,7 @@
         "max": 180,
         "step": 10,
         "unit": "px",
-        "default": 104
+        "default": 100
       },
       {
         "type": "image_picker",
