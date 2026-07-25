@@ -6,6 +6,9 @@ Shopify theme for **Pawly** — grooming gear for dogs and cats.
 Pure Liquid, vanilla CSS and vanilla JS. No React, no Tailwind, no build step,
 no CDN dependencies.
 
+> **Deployed** to unpublished theme `161055899886` on `getpawly.co.il`, not published.
+> Preview: `https://getpawly.co.il/?preview_theme_id=161055899886`
+>
 > **New here?** Read [`HANDOFF.md`](HANDOFF.md) before doing anything. It covers
 > what still needs filling in, the exact publish steps, and which theme IDs are
 > safe to write to.

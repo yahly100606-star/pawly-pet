@@ -50,13 +50,23 @@ Verified live against the store on 2026-07-25:
 
 | Theme ID | Name | Role |
 |---|---|---|
+| `161055899886` | Pawly rebuild 2026-07-25 | **the build target — write here** |
 | `161040367854` | pawlytheme | **MAIN (live) — NEVER WRITE** |
 | `161036828910` | pawly-shopify-theme | unpublished |
 | `160739885294` | pawly-shopify-theme | unpublished *(the brief called this "live"; it is not, any more)* |
 | `160748077294` | pawly-shopify-theme | unpublished |
 | `160739426542` | pawly-shopify-theme | unpublished |
 
-Best practice: duplicate `161040367854` in admin and push to the fresh copy.
+`161055899886` is a duplicate of live carrying this rebuild. It is NOT published.
+Publishing is the merchant's call, and `themePublish` is blocked by the API anyway.
+
+Two schema rules Shopify enforces but `theme check` does not catch — both
+invalidate the whole file silently:
+- a `range` default must sit on the `min`/`step` grid;
+- `"default": ""` is rejected outright. Omit the key instead.
+
+`themeFilesUpsert` swallows these errors on `URL` bodies and reports success.
+Re-push the file with a `TEXT` body to see the real error.
 
 ---
 
