@@ -265,32 +265,27 @@
         "type": "text",
         "id": "contact_whatsapp",
         "label": "מספר וואטסאפ",
-        "info": "בפורמט בינלאומי בלי סימנים, למשל 972501234567.",
-        "default": ""
+        "info": "בפורמט בינלאומי בלי סימנים, למשל 972501234567."
       },
       {
         "type": "text",
         "id": "contact_email",
-        "label": "מייל לשירות",
-        "default": ""
+        "label": "מייל לשירות"
       },
       {
         "type": "text",
         "id": "contact_phone",
-        "label": "טלפון",
-        "default": ""
+        "label": "טלפון"
       },
       {
         "type": "text",
         "id": "contact_hours",
-        "label": "שעות מענה",
-        "default": ""
+        "label": "שעות מענה"
       },
       {
         "type": "text",
         "id": "business_details",
-        "label": "פרטי העסק (ח.פ. / כתובת)",
-        "default": ""
+        "label": "פרטי העסק (ח.פ. / כתובת)"
       }
     ]
   },
