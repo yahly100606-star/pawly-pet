@@ -1,0 +1,11 @@
+{
+  "type": "footer",
+  "name": "Footer",
+  "sections": {
+    "pawly-footer": {
+      "type": "pawly-footer",
+      "settings": {}
+    }
+  },
+  "order": ["pawly-footer"]
+}

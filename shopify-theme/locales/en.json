@@ -1,0 +1,12 @@
+{
+  "general": { "meta": { "tags": "Tagged {{ tags }}", "page": "Page {{ page }}" } },
+  "accessibility": { "skip_to_content": "Skip to content", "main_nav": "Main navigation", "menu": "Menu" },
+  "products": { "on_sale": "Sale", "sold_out": "Sold out", "view": "View", "add_to_cart": "Add to cart", "empty": "No products to show yet." },
+  "cart": { "title": "Cart", "empty": "Your cart is empty.", "continue": "Continue shopping", "subtotal": "Subtotal", "update": "Update", "checkout": "Checkout", "quantity": "Quantity" },
+  "search": { "title": "Search", "placeholder": "What are you looking for?", "submit": "Search", "no_results": "No results found." },
+  "collections": { "title": "Collections" },
+  "newsletter": { "email": "Email address", "placeholder": "Enter your email", "subscribe": "Subscribe", "success": "Thanks! You're on the list." },
+  "contact": { "email": "Email" },
+  "footer": { "rights": "All rights reserved." },
+  "404": { "title": "Page not found", "text": "This page went for a walk. Let's get you home.", "link": "Back to home" }
+}

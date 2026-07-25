@@ -1,0 +1,46 @@
+{
+  "general": {
+    "meta": { "tags": "מתויג {{ tags }}", "page": "עמוד {{ page }}" }
+  },
+  "accessibility": {
+    "skip_to_content": "דילוג לתוכן",
+    "main_nav": "ניווט ראשי",
+    "menu": "תפריט"
+  },
+  "products": {
+    "on_sale": "מבצע",
+    "sold_out": "אזל",
+    "view": "לצפייה",
+    "add_to_cart": "הוספה לסל",
+    "empty": "אין מוצרים להצגה עדיין."
+  },
+  "cart": {
+    "title": "סל הקניות",
+    "empty": "הסל שלכם ריק.",
+    "continue": "המשך בקנייה",
+    "subtotal": "סכום ביניים",
+    "update": "עדכון",
+    "checkout": "לתשלום",
+    "quantity": "כמות"
+  },
+  "search": {
+    "title": "חיפוש",
+    "placeholder": "מה אתם מחפשים?",
+    "submit": "חיפוש",
+    "no_results": "לא נמצאו תוצאות."
+  },
+  "collections": { "title": "קטגוריות" },
+  "newsletter": {
+    "email": "כתובת אימייל",
+    "placeholder": "האימייל שלכם",
+    "subscribe": "הרשמה",
+    "success": "תודה! נרשמתם בהצלחה."
+  },
+  "contact": { "email": "אימייל" },
+  "footer": { "rights": "כל הזכויות שמורות." },
+  "404": {
+    "title": "העמוד לא נמצא",
+    "text": "נראה שהעמוד הזה ברח לטיול. בואו נחזיר אתכם הביתה.",
+    "link": "חזרה לדף הבית"
+  }
+}

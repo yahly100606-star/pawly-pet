@@ -1,0 +1,88 @@
+{%- comment -%}Product page — gallery, variant picker, add to cart.{%- endcomment -%}
+
+<section class="pawly-page">
+  <div class="pawly-container">
+    <div class="pawly-product">
+      <div>
+        <div class="pawly-product__media">
+          {%- if product.featured_image -%}
+            <img
+              src="{{ product.featured_image | image_url: width: 1200 }}"
+              srcset="
+                {{ product.featured_image | image_url: width: 600 }} 600w,
+                {{ product.featured_image | image_url: width: 1200 }} 1200w
+              "
+              sizes="(min-width: 860px) 50vw, 100vw"
+              alt="{{ product.featured_image.alt | default: product.title | escape }}"
+              width="1200"
+              height="1200"
+            >
+          {%- else -%}
+            <span class="pawly-card__placeholder">{%- render 'pawly-paw' -%}</span>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div>
+        <h1>{{ product.title }}</h1>
+
+        <div class="pawly-product__price">
+          {%- if product.compare_at_price > product.price -%}
+            <del>{{ product.compare_at_price | money }}</del>
+          {%- endif -%}
+          {{ product.price | money }}
+        </div>
+
+        {%- form 'product', product, class: 'pawly-product__form' -%}
+          {%- unless product.has_only_default_variant -%}
+            {%- for option in product.options_with_values -%}
+              <div>
+                <label for="Option-{{ option.position }}">{{ option.name }}</label>
+                <select id="Option-{{ option.position }}" name="options[{{ option.name | escape }}]">
+                  {%- for value in option.values -%}
+                    <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>
+                      {{ value }}
+                    </option>
+                  {%- endfor -%}
+                </select>
+              </div>
+            {%- endfor -%}
+          {%- endunless -%}
+
+          <select name="id" class="visually-hidden" aria-hidden="true" tabindex="-1">
+            {%- for variant in product.variants -%}
+              <option
+                value="{{ variant.id }}"
+                {% if variant == product.selected_or_first_available_variant %}selected{% endif %}
+                {% unless variant.available %}disabled{% endunless %}
+              >
+                {{ variant.title }}
+              </option>
+            {%- endfor -%}
+          </select>
+
+          <button
+            class="pawly-btn pawly-btn--primary"
+            type="submit"
+            name="add"
+            {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}
+          >
+            {%- if product.selected_or_first_available_variant.available -%}
+              {{ 'products.add_to_cart' | t }}
+            {%- else -%}
+              {{ 'products.sold_out' | t }}
+            {%- endif -%}
+          </button>
+        {%- endform -%}
+
+        {%- if product.description != blank -%}
+          <div class="pawly-product__desc pawly-rte">{{ product.description }}</div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Product", "settings": [] }
+{% endschema %}

@@ -1,0 +1,37 @@
+<section class="pawly-page">
+  <div class="pawly-container">
+    <div class="pawly-section-head">
+      <h2>{{ 'search.title' | t }}</h2>
+      <form action="{{ routes.search_url }}" method="get" class="pawly-newsletter" style="margin-inline:auto;margin-top:1.5rem">
+        <label class="visually-hidden" for="PawlySearch">{{ 'search.title' | t }}</label>
+        <input id="PawlySearch" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'search.placeholder' | t }}">
+        <button type="submit" aria-label="{{ 'search.submit' | t }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </button>
+      </form>
+    </div>
+
+    {%- if search.performed -%}
+      {%- paginate search.results by 24 -%}
+        {%- if search.results.size > 0 -%}
+          <div class="pawly-products">
+            {%- for item in search.results -%}
+              {%- if item.object_type == 'product' -%}
+                {%- render 'pawly-product-card', product: item, delay: forloop.index0 | times: 60 -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          {%- if paginate.pages > 1 -%}
+            <nav class="pawly-section-head" style="margin-top:3rem">{{ paginate | default_pagination }}</nav>
+          {%- endif -%}
+        {%- else -%}
+          <p class="pawly-section-head">{{ 'search.no_results' | t }}</p>
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Search", "settings": [] }
+{% endschema %}

@@ -1,0 +1,116 @@
+{%- comment -%}Footer — newsletter, link columns, contact, social.{%- endcomment -%}
+
+<footer class="pawly-footer">
+  <div class="pawly-container">
+    <div class="pawly-footer__grid">
+      <div class="pawly-reveal">
+        <h2>{{ section.settings.newsletter_heading }}</h2>
+        <p>{{ section.settings.newsletter_text }}</p>
+
+        {%- form 'customer', class: 'pawly-newsletter' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <label class="visually-hidden" for="PawlyNewsletter">
+            {{ 'newsletter.email' | t }}
+          </label>
+          <input
+            id="PawlyNewsletter"
+            type="email"
+            name="contact[email]"
+            placeholder="{{ 'newsletter.placeholder' | t }}"
+            autocomplete="email"
+            required
+          >
+          <button type="submit" aria-label="{{ 'newsletter.subscribe' | t }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/>
+            </svg>
+          </button>
+
+          {%- if form.posted_successfully? -%}
+            <p role="status">{{ 'newsletter.success' | t }}</p>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+
+      <div class="pawly-reveal" style="--pawly-delay: 80ms">
+        <h3>{{ section.settings.links_heading }}</h3>
+        <nav>
+          {%- for link in section.settings.menu.links -%}
+            <a href="{{ link.url }}">{{ link.title }}</a>
+          {%- endfor -%}
+        </nav>
+      </div>
+
+      <div class="pawly-reveal" style="--pawly-delay: 160ms">
+        <h3>{{ section.settings.contact_heading }}</h3>
+        <address>
+          {%- if section.settings.contact_text != blank -%}
+            <span>{{ section.settings.contact_text }}</span>
+          {%- endif -%}
+          {%- if shop.email != blank -%}
+            <span>{{ 'contact.email' | t }}: {{ shop.email }}</span>
+          {%- endif -%}
+          {%- if section.settings.contact_note != blank -%}
+            <span>{{ section.settings.contact_note }}</span>
+          {%- endif -%}
+        </address>
+      </div>
+
+      <div class="pawly-reveal" style="--pawly-delay: 240ms">
+        <h3>{{ section.settings.social_heading }}</h3>
+        <div class="pawly-social">
+          {%- if settings.social_instagram_link != blank -%}
+            <a href="{{ settings.social_instagram_link }}" rel="noopener" target="_blank">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="2" y="2" width="20" height="20" rx="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+              </svg>
+              <span class="visually-hidden">Instagram</span>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_facebook_link != blank -%}
+            <a href="{{ settings.social_facebook_link }}" rel="noopener" target="_blank">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+              <span class="visually-hidden">Facebook</span>
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+
+    <div class="pawly-footer__bottom">
+      <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ 'footer.rights' | t }}</span>
+      <nav>
+        {%- for link in section.settings.policy_menu.links -%}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {%- endfor -%}
+      </nav>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Pawly footer",
+  "settings": [
+    { "type": "text", "id": "newsletter_heading", "label": "Newsletter heading", "default": "מצטרפים לחבורה" },
+    {
+      "type": "textarea",
+      "id": "newsletter_text",
+      "label": "Newsletter text",
+      "default": "טיפים לטיפוח, מוצרים חדשים, ו-10% הנחה על ההזמנה הראשונה. בלי ספאם — מובטח."
+    },
+    { "type": "text", "id": "links_heading", "label": "Links heading", "default": "חנות ומידע" },
+    { "type": "link_list", "id": "menu", "label": "Footer menu", "default": "footer" },
+    { "type": "text", "id": "contact_heading", "label": "Contact heading", "default": "יצירת קשר" },
+    { "type": "text", "id": "contact_text", "label": "Contact text", "default": "שאלות על הפרווה של החיה שלכם?" },
+    { "type": "text", "id": "contact_note", "label": "Contact note", "default": "אנחנו עונים תוך יום עסקים אחד." },
+    { "type": "text", "id": "social_heading", "label": "Social heading", "default": "עוקבים אחרינו" },
+    { "type": "link_list", "id": "policy_menu", "label": "Policy menu" }
+  ],
+  "enabled_on": { "groups": ["footer"] }
+}
+{% endschema %}

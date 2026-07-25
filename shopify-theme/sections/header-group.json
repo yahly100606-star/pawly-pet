@@ -1,0 +1,14 @@
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "pawly-header": {
+      "type": "pawly-header",
+      "settings": {
+        "brand_name": "pawly",
+        "cta_label": "לחנות"
+      }
+    }
+  },
+  "order": ["pawly-header"]
+}

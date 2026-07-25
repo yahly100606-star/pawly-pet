@@ -1,0 +1,16 @@
+<section class="pawly-page">
+  <div class="pawly-container">
+    <article style="max-width:44rem;margin-inline:auto">
+      <h1 style="font-size:clamp(1.8rem,5vw,2.8rem);font-weight:800">{{ article.title }}</h1>
+      <p style="color:var(--pawly-muted);margin-top:.5rem">{{ article.published_at | date: '%d.%m.%Y' }}</p>
+      {%- if article.image -%}
+        <img src="{{ article.image | image_url: width: 1200 }}" alt="{{ article.title | escape }}" width="1200" height="675" style="border-radius:var(--pawly-radius-lg);margin-block:2rem">
+      {%- endif -%}
+      <div class="pawly-rte">{{ article.content }}</div>
+    </article>
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Article", "settings": [] }
+{% endschema %}

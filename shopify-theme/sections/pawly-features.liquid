@@ -1,0 +1,124 @@
+{%- comment -%}Three feature cards with staggered scroll reveal.{%- endcomment -%}
+
+<section class="pawly-section" id="features">
+  <div class="pawly-container">
+    <div class="pawly-section-head pawly-reveal">
+      {%- if section.settings.eyebrow != blank -%}
+        <span class="pawly-eyebrow">{{ section.settings.eyebrow }}</span>
+      {%- endif -%}
+      <h2>{{ section.settings.heading }}</h2>
+      {%- if section.settings.subheading != blank -%}
+        <p>{{ section.settings.subheading }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="pawly-grid-3">
+      {%- for block in section.blocks -%}
+        <article
+          class="pawly-feature pawly-reveal"
+          style="--pawly-delay: {{ forloop.index0 | times: 120 }}ms"
+          {{ block.shopify_attributes }}
+        >
+          <span class="pawly-feature__icon{% if block.settings.icon_style == 'accent' %} pawly-feature__icon--accent{% endif %}">
+            {%- case block.settings.icon -%}
+              {%- when 'shield' -%}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              {%- when 'sparkle' -%}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg>
+              {%- when 'heart' -%}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg>
+              {%- else -%}
+                {%- render 'pawly-paw' -%}
+            {%- endcase -%}
+          </span>
+
+          <h3>{{ block.settings.title }}</h3>
+          <p>{{ block.settings.text }}</p>
+        </article>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Pawly features",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "למה Pawly" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "טיפוח מאושר, בתכנון נכון" },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "שלוש סיבות שבגללן זמן הרחצה מפסיק להיות מאבק."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icon",
+          "options": [
+            { "value": "heart", "label": "Heart" },
+            { "value": "sparkle", "label": "Sparkle" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "paw", "label": "Paw" }
+          ],
+          "default": "heart"
+        },
+        {
+          "type": "select",
+          "id": "icon_style",
+          "label": "Icon colour",
+          "options": [
+            { "value": "primary", "label": "Puppy Orange" },
+            { "value": "accent", "label": "Sky Pup Blue" }
+          ],
+          "default": "primary"
+        },
+        { "type": "text", "id": "title", "label": "Title", "default": "כותרת" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "תיאור קצר." }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Pawly features",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "heart",
+            "icon_style": "primary",
+            "title": "מאושר וטרינרים, אהוב על החיות",
+            "text": "כל מברשת, מכשיר ותכשיר נבדקים על ידי וטרינרים ונבחנים על חיות אמיתיות — עדין על העור, רגוע על העצבים."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "sparkle",
+            "icon_style": "accent",
+            "title": "מתאים בדיוק לפרווה שלכם",
+            "text": "פרווה כפולה, מתולתלת, חלקה או משהו באמצע — כלים שמתאימים לפרווה שאיתה אתם חיים באמת, כך שהטיפוח עובד כבר בפעם הראשונה."
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "icon": "shield",
+            "icon_style": "primary",
+            "title": "הבטחת Pawly ל-90 יום",
+            "text": "אם החיה שלכם לא נהנית יותר מהטיפוח תוך 90 יום — מחזירים את המוצר וגם את הכסף. בלי טפסים, בלי ויכוחים."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

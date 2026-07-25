@@ -1,0 +1,128 @@
+{%- comment -%}Accordion FAQ — vanilla JS toggle, full aria wiring.{%- endcomment -%}
+
+<section class="pawly-section" id="faq">
+  <div class="pawly-container">
+    <div class="pawly-section-head pawly-reveal">
+      {%- if section.settings.eyebrow != blank -%}
+        <span class="pawly-eyebrow">{{ section.settings.eyebrow }}</span>
+      {%- endif -%}
+      <h2>{{ section.settings.heading }}</h2>
+      {%- if section.settings.subheading != blank -%}
+        <p>{{ section.settings.subheading }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="pawly-faq pawly-reveal" data-pawly-faq>
+      {%- for block in section.blocks -%}
+        {%- assign is_open = false -%}
+        {%- if forloop.first and section.settings.open_first -%}
+          {%- assign is_open = true -%}
+        {%- endif -%}
+
+        <div
+          class="pawly-faq__item{% if is_open %} is-open{% endif %}"
+          {{ block.shopify_attributes }}
+        >
+          <button
+            class="pawly-faq__q"
+            type="button"
+            id="faq-q-{{ block.id }}"
+            aria-expanded="{% if is_open %}true{% else %}false{% endif %}"
+            aria-controls="faq-a-{{ block.id }}"
+          >
+            {{ block.settings.question }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m6 9 6 6 6-6"/>
+            </svg>
+          </button>
+
+          <div
+            class="pawly-faq__a"
+            id="faq-a-{{ block.id }}"
+            role="region"
+            aria-labelledby="faq-q-{{ block.id }}"
+          >
+            <div><p>{{ block.settings.answer }}</p></div>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Pawly FAQ",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "שאלות טובות" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "לפני שתשאלו" },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "כל מה שבעלי חיות שאכפת להם רוצים לדעת."
+    },
+    { "type": "checkbox", "id": "open_first", "label": "Open first item", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "faq",
+      "name": "Question",
+      "settings": [
+        { "type": "text", "id": "question", "label": "Question", "default": "שאלה" },
+        { "type": "textarea", "id": "answer", "label": "Answer", "default": "תשובה" }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Pawly FAQ",
+      "blocks": [
+        {
+          "type": "faq",
+          "settings": {
+            "question": "מה זו בדיוק הבטחת Pawly ל-90 יום?",
+            "answer": "אפשר להשתמש בכל מוצר של Pawly עד 90 יום. אם החיה שלכם לא רגועה יותר בזמן הטיפוח — או שפשוט לא התאהבתם — מחזירים ומקבלים החזר מלא. בלי טפסים ובלי חקירות."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "המוצרים בטוחים לגורים ולחתולים?",
+            "answer": "כן. הכל נבדק על ידי וטרינרים ומיוצר בריח עדין וללא צריבה בעיניים. המברשות והתכשירים מתאימים לחתולים ולגורים מגיל 12 שבועות; מכשירי הגילוח מומלצים מגיל 6 חודשים."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "איך אני בוחר את המברשת הנכונה לפרווה שלי?",
+            "answer": "בכל עמוד מוצר יש בורר סוג פרווה — כפולה, מתולתלת, חלקה, קשה או קצרה. שתי הקלקות ואנחנו מפנים אתכם לכלי הנכון. עדיין לא בטוחים? שלחו לנו תמונה של החיה ונחזור אליכם תוך יום עסקים אחד."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "כמה זמן לוקח המשלוח?",
+            "answer": "ההזמנות יוצאות תוך 24 שעות בימי עסקים, עם משלוח חינם בכל הזמנה. רוב ההזמנות מגיעות תוך 2–4 ימי עסקים, ותקבלו מספר מעקב ברגע שהחבילה יוצאת מהמחסן."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "אפשר להחזיר מוצר שכבר נפתח?",
+            "answer": "בהחלט. הבטחת 90 יום חלה גם על מוצרים שנפתחו ונוסו — זה בדיוק הרעיון. בלי אריזה מקורית, בלי דמי טיפול."
+          }
+        },
+        {
+          "type": "faq",
+          "settings": {
+            "question": "הכלב שלי שונא טיפוח. זה באמת יעזור?",
+            "answer": "בדיוק בשבילו בנינו את זה. הכלים מתוכננים סביב רעש נמוך, מגע עדין וסשנים קצרים, וכל ערכה כוללת מדריך הרגלה צעד אחר צעד. בדרך כלל לוקח שבועיים-שלושה של סשנים קצרים עם הרבה פינוקים — וההבטחה מכסה אתכם לאורך כל הדרך."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
