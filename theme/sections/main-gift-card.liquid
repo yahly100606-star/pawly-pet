@@ -1,0 +1,60 @@
+<div class="pawly-container pawly-section">
+  <div class="giftcard">
+    <h1 style="font-size: var(--step-2)">{{ 'gift_cards.issued.title' | t }}</h1>
+    <p>{{ 'gift_cards.issued.subtext' | t }}</p>
+
+    <p class="giftcard__value">{{ gift_card.initial_value | money }}</p>
+
+    {%- if gift_card.balance != gift_card.initial_value -%}
+      {%- assign balance = gift_card.balance | money -%}
+      <p class="badge">{{ 'gift_cards.issued.remaining' | t: balance: balance }}</p>
+    {%- endif -%}
+
+    <p class="giftcard__code" data-gift-code>{{ gift_card.code | format_code }}</p>
+
+    <p>
+      <button type="button" class="btn btn--outline btn--sm" data-copy-code>
+        {{ 'gift_cards.issued.copy_code' | t }}
+      </button>
+    </p>
+
+    {%- comment -%}
+      No QR code. Rendering one needs a QR library, and vendoring a second JS
+      dependency to draw a code the customer can already copy is not a trade
+      worth making. The code text is the thing that gets used at checkout.
+    {%- endcomment -%}
+
+    <p class="pawly-card__meta">{{ 'gift_cards.issued.how_to_use' | t }}</p>
+
+    {%- if gift_card.expires_on -%}
+      {%- assign expiry = gift_card.expires_on | date: '%d.%m.%Y' -%}
+      <p class="pawly-card__meta">{{ 'gift_cards.issued.expires' | t: date: expiry }}</p>
+    {%- endif -%}
+
+    <p style="display: flex; gap: var(--sp-2); justify-content: center; flex-wrap: wrap">
+      <a href="{{ shop.url }}" class="btn btn--clay btn--sm">{{ 'gift_cards.issued.shop' | t }}</a>
+      <button type="button" class="btn btn--outline btn--sm" onclick="window.print()">
+        {{ 'gift_cards.issued.print' | t }}
+      </button>
+    </p>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var btn = document.querySelector('[data-copy-code]');
+    var code = document.querySelector('[data-gift-code]');
+    if (!btn || !code || !navigator.clipboard) return;
+    btn.addEventListener('click', function () {
+      navigator.clipboard.writeText(code.textContent.trim()).then(function () {
+        btn.textContent = {{ 'gift_cards.issued.copied' | t | json }};
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "כרטיס מתנה"
+}
+{% endschema %}

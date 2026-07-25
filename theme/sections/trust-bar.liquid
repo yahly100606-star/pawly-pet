@@ -1,0 +1,60 @@
+<section class="trust">
+  <div class="pawly-container">
+    <ul class="trust__grid">
+      {%- for block in section.blocks -%}
+        <li class="trust__item" {{ block.shopify_attributes }}>
+          <span class="trust__icon">{% render block.settings.icon %}</span>
+          <div>
+            <p class="trust__title">{{ block.settings.title }}</p>
+            {%- if block.settings.body != blank -%}
+              <p class="trust__body">{{ block.settings.body }}</p>
+            {%- endif -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "פס אמון",
+  "max_blocks": 4,
+  "blocks": [
+    {
+      "type": "item",
+      "name": "פריט",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "אייקון",
+          "options": [
+            { "value": "icon-truck", "label": "משלוח" },
+            { "value": "icon-shield", "label": "מגן" },
+            { "value": "icon-return", "label": "החזרה" },
+            { "value": "icon-whatsapp", "label": "וואטסאפ" },
+            { "value": "icon-lock", "label": "מנעול" },
+            { "value": "icon-clock", "label": "שעון" },
+            { "value": "icon-paw", "label": "כפה" }
+          ],
+          "default": "icon-truck"
+        },
+        { "type": "text", "id": "title", "label": "כותרת" },
+        { "type": "text", "id": "body", "label": "שורת הסבר" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "פס אמון",
+      "blocks": [
+        { "type": "item", "settings": { "icon": "icon-truck", "title": "משלוח חינם מעל ₪150", "body": "לכל הארץ" } },
+        { "type": "item", "settings": { "icon": "icon-return", "title": "החזר כספי מלא תוך 90 יום", "body": "לא התאים? מחזירים" } },
+        { "type": "item", "settings": { "icon": "icon-whatsapp", "title": "שירות בוואטסאפ", "body": "" } },
+        { "type": "item", "settings": { "icon": "icon-lock", "title": "תשלום מאובטח", "body": "כרטיס אשראי, Bit, Apple Pay" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

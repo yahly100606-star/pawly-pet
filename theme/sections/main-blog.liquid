@@ -1,0 +1,62 @@
+<div class="pawly-container pawly-section">
+  <div class="page-head">
+    <h1>{{ blog.title }}</h1>
+  </div>
+
+  {%- if blog.articles_count == 0 -%}
+    <div class="empty-state">
+      <p>{{ 'blogs.article.empty' | t }}</p>
+    </div>
+  {%- else -%}
+    {%- paginate blog.articles by 9 -%}
+      <div class="product-grid" style="--grid-cols: 3">
+        {%- for article in blog.articles -%}
+          <article class="card-panel reveal">
+            {%- if article.image -%}
+              <a href="{{ article.url }}" class="pawly-card__media" style="display: block">
+                <img
+                  src="{{ article.image | image_url: width: 700 }}"
+                  alt="{{ article.image.alt | default: article.title | escape }}"
+                  width="{{ article.image.width }}"
+                  height="{{ article.image.height }}"
+                  loading="lazy"
+                >
+              </a>
+            {%- endif -%}
+            <h2 style="font-size: var(--step-2)">
+              <a href="{{ article.url }}" style="text-decoration: none">{{ article.title }}</a>
+            </h2>
+            {%- assign posted = article.published_at | date: '%d.%m.%Y' -%}
+            <p class="pawly-card__meta">
+              {{ 'blogs.article.posted_on' | t: date: posted }}
+            </p>
+            <p>{{ article.excerpt_or_content | strip_html | truncatewords: 24 }}</p>
+            <a href="{{ article.url }}" class="btn btn--ghost btn--sm">
+              {{ 'blogs.article.read_more' | t }}
+            </a>
+          </article>
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        <nav class="pagination" aria-label="{{ 'general.pagination.label' | t }}">
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a href="{{ part.url }}">{{ part.title }}</a>
+            {%- else -%}
+              <span {% if part.title == paginate.current_page %}aria-current="page"{% endif %}>
+                {{- part.title -}}
+              </span>
+            {%- endif -%}
+          {%- endfor -%}
+        </nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "בלוג"
+}
+{% endschema %}

@@ -1,0 +1,95 @@
+<div class="pawly-container pawly-section">
+  <div class="page-head">
+    <h1>{{ 'customer.addresses.title' | t }}</h1>
+  </div>
+
+  <div class="narrow">
+    <details class="card-panel" style="margin-bottom: var(--sp-5)">
+      <summary style="cursor: pointer; font-weight: 700">
+        {{ 'customer.addresses.add_new' | t }}
+      </summary>
+
+      {%- form 'customer_address', customer.new_address -%}
+        {% render 'address-fields', form: form %}
+        <button type="submit" class="btn btn--primary">{{ 'customer.addresses.add' | t }}</button>
+      {%- endform -%}
+    </details>
+
+    {%- paginate customer.addresses by 10 -%}
+      {%- for address in customer.addresses -%}
+        <div class="card-panel" style="margin-bottom: var(--sp-4)">
+          {%- if address == customer.default_address -%}
+            <p class="badge">{{ 'customer.addresses.default' | t }}</p>
+          {%- endif -%}
+
+          {{ address | format_address }}
+
+          <details style="margin-top: var(--sp-3)">
+            <summary style="cursor: pointer">{{ 'customer.addresses.edit' | t }}</summary>
+            {%- form 'customer_address', address -%}
+              {% render 'address-fields', form: form %}
+              <button type="submit" class="btn btn--primary btn--sm">
+                {{ 'customer.addresses.update' | t }}
+              </button>
+            {%- endform -%}
+          </details>
+
+          <p style="margin: var(--sp-3) 0 0">
+            <a
+              href="#"
+              class="cart-line__remove"
+              data-delete-address="{{ address.url }}"
+            >
+              {{ 'customer.addresses.delete' | t }}
+            </a>
+          </p>
+        </div>
+      {%- endfor -%}
+
+      {%- if paginate.pages > 1 -%}
+        <nav class="pagination" aria-label="{{ 'general.pagination.label' | t }}">
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a href="{{ part.url }}">{{ part.title }}</a>
+            {%- else -%}
+              <span {% if part.title == paginate.current_page %}aria-current="page"{% endif %}>
+                {{- part.title -}}
+              </span>
+            {%- endif -%}
+          {%- endfor -%}
+        </nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+
+    <p style="margin-top: var(--sp-5)">
+      <a href="{{ routes.account_url }}" class="btn btn--ghost btn--sm">
+        {{ 'customer.account.return' | t }}
+      </a>
+    </p>
+  </div>
+</div>
+
+<script>
+  (function () {
+    document.addEventListener('click', function (e) {
+      var link = e.target.closest('[data-delete-address]');
+      if (!link) return;
+      e.preventDefault();
+      if (!window.confirm({{ 'customer.addresses.delete_confirm' | t | json }})) return;
+
+      // Shopify expects a DELETE via a form post with _method.
+      var form = document.createElement('form');
+      form.method = 'post';
+      form.action = link.getAttribute('data-delete-address');
+      form.innerHTML = '<input type="hidden" name="_method" value="delete">';
+      document.body.appendChild(form);
+      form.submit();
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "כתובות"
+}
+{% endschema %}

@@ -1,0 +1,57 @@
+<div class="pawly-container pawly-section">
+  <div class="narrow">
+    <div class="page-head">
+      <h1>{{ 'customer.activate_account.title' | t }}</h1>
+      <p>{{ 'customer.activate_account.subtext' | t }}</p>
+    </div>
+
+    <div class="card-panel">
+      {%- form 'activate_customer_password' -%}
+        {%- if form.errors -%}
+          <p class="form-status form-status--error" role="alert">{{ form.errors | default_errors }}</p>
+        {%- endif -%}
+
+        <div class="field">
+          <label class="field__label" for="act-password">
+            {{ 'customer.activate_account.password' | t }}
+          </label>
+          <input
+            id="act-password"
+            class="input"
+            type="password"
+            name="customer[password]"
+            autocomplete="new-password"
+            required
+          >
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="act-password-confirm">
+            {{ 'customer.activate_account.password_confirm' | t }}
+          </label>
+          <input
+            id="act-password-confirm"
+            class="input"
+            type="password"
+            name="customer[password_confirmation]"
+            autocomplete="new-password"
+            required
+          >
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--block">
+          {{ 'customer.activate_account.submit' | t }}
+        </button>
+        <button type="submit" name="decline" class="btn btn--ghost btn--sm btn--block">
+          {{ 'customer.activate_account.cancel' | t }}
+        </button>
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "הפעלת חשבון"
+}
+{% endschema %}

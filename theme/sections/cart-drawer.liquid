@@ -1,0 +1,17 @@
+{% comment %}
+  Thin section wrapper around snippets/cart-drawer.liquid.
+
+  It exists so the drawer can be re-rendered server-side through the Section
+  Rendering API (`/cart?sections=cart-drawer`). That keeps every price in
+  Liquid `money` filters — no currency formatting is duplicated in JS.
+
+  Rendered from layout/theme.liquid, so it is available on every page.
+{% endcomment %}
+
+{% render 'cart-drawer' %}
+
+{% schema %}
+{
+  "name": "סל נפתח"
+}
+{% endschema %}

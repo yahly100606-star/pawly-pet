@@ -1,0 +1,18 @@
+# Run before every push:  shopify theme check
+#
+# The build target is zero errors. Two rules are switched off, both for
+# reasons that are structural rather than convenience:
+
+extends: theme-check:recommended
+
+OrphanedSnippet:
+  # The icon snippets are rendered dynamically — `{% render block.settings.icon %}`
+  # in trust-bar.liquid and how-it-works.liquid, where the snippet name comes
+  # from a Theme Editor select. Static analysis cannot see those references, so
+  # every icon the merchant has not currently selected reads as orphaned.
+  enabled: false
+
+AssetPreload:
+  # Kept on. Only the two Hebrew font subsets are preloaded, via preload_tag,
+  # because they are on the critical path for LCP. Do not add more.
+  enabled: true

@@ -1,0 +1,261 @@
+{
+  "sections": {
+    "hero": {
+      "type": "pawly-hero",
+      "settings": {
+        "heading": "טיפוח בבית שגם הם אוהבים",
+        "subheading": "מברשות, ניקוי כפות ומשחה לכריות. הכול בבית, בלי מספרה ובלי מאבק.",
+        "cta_label": "לכל המוצרים",
+        "cta_link": "/collections/all",
+        "footnote": "משלוח חינם מעל ₪150 · החזר כספי מלא תוך 90 יום",
+        "video_alt": "סרטון קצר של טיפוח בבית",
+        "desktop_shift": 150,
+        "mobile_shift": 180
+      }
+    },
+
+    "trust": {
+      "type": "trust-bar",
+      "blocks": {
+        "shipping": {
+          "type": "item",
+          "settings": {
+            "icon": "icon-truck",
+            "title": "משלוח חינם מעל ₪150",
+            "body": "לכל הארץ"
+          }
+        },
+        "returns": {
+          "type": "item",
+          "settings": {
+            "icon": "icon-return",
+            "title": "החזר כספי מלא תוך 90 יום",
+            "body": "לא התאים? מחזירים"
+          }
+        },
+        "support": {
+          "type": "item",
+          "settings": {
+            "icon": "icon-whatsapp",
+            "title": "שירות בוואטסאפ",
+            "body": "[דרוש מידע: שעות מענה]"
+          }
+        },
+        "secure": {
+          "type": "item",
+          "settings": {
+            "icon": "icon-lock",
+            "title": "תשלום מאובטח",
+            "body": "כרטיס אשראי, Bit, Apple Pay"
+          }
+        }
+      },
+      "block_order": ["shipping", "returns", "support", "secure"]
+    },
+
+    "categories": {
+      "type": "category-cards",
+      "settings": {
+        "heading": "מה מחפשים היום?"
+      },
+      "blocks": {
+        "dogs": {
+          "type": "card",
+          "settings": {
+            "title": "כלבים",
+            "link": "/collections/all"
+          }
+        },
+        "cats": {
+          "type": "card",
+          "settings": {
+            "title": "חתולים",
+            "link": "/collections/all"
+          }
+        },
+        "paws": {
+          "type": "card",
+          "settings": {
+            "title": "טיפוח כפות",
+            "link": "/collections/all"
+          }
+        }
+      },
+      "block_order": ["dogs", "cats", "paws"]
+    },
+
+    "featured": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "המוצרים שלנו",
+        "subheading": "שישה כלים, כל אחד לבעיה אחת ספציפית.",
+        "limit": 4,
+        "columns": 4,
+        "show_view_all": true
+      }
+    },
+
+    "how": {
+      "type": "how-it-works",
+      "settings": {
+        "heading": "איך זה עובד",
+        "show_numbers": true
+      },
+      "blocks": {
+        "order": {
+          "type": "step",
+          "settings": {
+            "icon": "icon-box",
+            "title": "מזמינים",
+            "body": "בוחרים מוצר, משלמים, וזהו. משלוח חינם מעל ₪150."
+          }
+        },
+        "arrives": {
+          "type": "step",
+          "settings": {
+            "icon": "icon-truck",
+            "title": "מגיע תוך 10–16 ימי עסקים",
+            "body": "שולחים לכל הארץ. מעדכנים אתכם במייל כשההזמנה יוצאת."
+          }
+        },
+        "returns": {
+          "type": "step",
+          "settings": {
+            "icon": "icon-return",
+            "title": "לא מרוצים? מחזירים",
+            "body": "החזר כספי מלא תוך 90 יום מקבלת ההזמנה."
+          }
+        }
+      },
+      "block_order": ["order", "arrives", "returns"]
+    },
+
+    "testimonials": {
+      "type": "testimonials",
+      "settings": {
+        "heading": "מה אומרים עלינו",
+        "show_notice": true
+      },
+      "blocks": {
+        "r1": {
+          "type": "review",
+          "settings": {
+            "is_placeholder": true,
+            "text": "[דרוש מידע: ביקורת אמיתית של לקוח]",
+            "name": "[שם]",
+            "pet": "[שם החיה]"
+          }
+        },
+        "r2": {
+          "type": "review",
+          "settings": {
+            "is_placeholder": true,
+            "text": "[דרוש מידע: ביקורת אמיתית של לקוח]",
+            "name": "[שם]",
+            "pet": "[שם החיה]"
+          }
+        },
+        "r3": {
+          "type": "review",
+          "settings": {
+            "is_placeholder": true,
+            "text": "[דרוש מידע: ביקורת אמיתית של לקוח]",
+            "name": "[שם]",
+            "pet": "[שם החיה]"
+          }
+        },
+        "r4": {
+          "type": "review",
+          "settings": {
+            "is_placeholder": true,
+            "text": "[דרוש מידע: ביקורת אמיתית של לקוח]",
+            "name": "[שם]",
+            "pet": "[שם החיה]"
+          }
+        },
+        "r5": {
+          "type": "review",
+          "settings": {
+            "is_placeholder": true,
+            "text": "[דרוש מידע: ביקורת אמיתית של לקוח]",
+            "name": "[שם]",
+            "pet": "[שם החיה]"
+          }
+        },
+        "r6": {
+          "type": "review",
+          "settings": {
+            "is_placeholder": true,
+            "text": "[דרוש מידע: ביקורת אמיתית של לקוח]",
+            "name": "[שם]",
+            "pet": "[שם החיה]"
+          }
+        }
+      },
+      "block_order": ["r1", "r2", "r3", "r4", "r5", "r6"]
+    },
+
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "הצטרפו לחבורה של Pawly",
+        "body": "מדי פעם מייל עם מוצר חדש או טיפ קצר. בלי ספאם, ואפשר להסיר את עצמכם בקליק."
+      }
+    },
+
+    "faq": {
+      "type": "faq",
+      "settings": {
+        "heading": "שאלות שחוזרות"
+      },
+      "blocks": {
+        "shipping": {
+          "type": "qa",
+          "settings": {
+            "question": "כמה זמן לוקח המשלוח?",
+            "answer": "<p>10–16 ימי עסקים לכל הארץ. משלוח חינם בהזמנה מעל ₪150.</p>"
+          }
+        },
+        "returns": {
+          "type": "qa",
+          "settings": {
+            "question": "אפשר להחזיר?",
+            "answer": "<p>כן. החזר כספי מלא תוך 90 יום מקבלת ההזמנה.</p>"
+          }
+        },
+        "notforme": {
+          "type": "qa",
+          "settings": {
+            "question": "לא התחברתם?",
+            "answer": "<p>צרו איתנו קשר ונמצא פתרון.</p>"
+          }
+        },
+        "payment": {
+          "type": "qa",
+          "settings": {
+            "question": "אילו אמצעי תשלום יש?",
+            "answer": "<p>כרטיס אשראי, Bit ו־Apple Pay, דרך עמוד תשלום מאובטח של Shopify.</p>"
+          }
+        },
+        "contact": {
+          "type": "qa",
+          "settings": {
+            "question": "איך מדברים איתכם?",
+            "answer": "<p>[דרוש מידע: מספר וואטסאפ וכתובת מייל לשירות]</p>"
+          }
+        }
+      },
+      "block_order": ["shipping", "returns", "notforme", "payment", "contact"]
+    }
+  },
+  "order": [
+    "hero",
+    "trust",
+    "categories",
+    "featured",
+    "how",
+    "testimonials",
+    "newsletter",
+    "faq"
+  ]
+}

@@ -1,0 +1,83 @@
+{% comment %}
+  Accordion built on <details>, so every question opens and closes with
+  JavaScript disabled. data-accordion-exclusive makes pawly.js close the
+  others when one opens — an enhancement, not a requirement.
+{% endcomment %}
+
+<section class="pawly-section" id="faq-{{ section.id }}">
+  <div class="pawly-container">
+    <div class="pawly-section__head pawly-section__head--center">
+      <h2>{{ section.settings.heading }}</h2>
+    </div>
+
+    <div class="faq" data-accordion-exclusive>
+      {%- for block in section.blocks -%}
+        <details class="faq__item" {{ block.shopify_attributes }}>
+          <summary>{{ block.settings.question }}</summary>
+          <div class="faq__answer rte">{{ block.settings.answer }}</div>
+        </details>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "שאלות ותשובות",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "כותרת", "default": "שאלות שחוזרות" }
+  ],
+  "blocks": [
+    {
+      "type": "qa",
+      "name": "שאלה",
+      "settings": [
+        { "type": "text", "id": "question", "label": "שאלה" },
+        { "type": "richtext", "id": "answer", "label": "תשובה" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "שאלות ותשובות",
+      "blocks": [
+        {
+          "type": "qa",
+          "settings": {
+            "question": "כמה זמן לוקח המשלוח?",
+            "answer": "<p>10–16 ימי עסקים לכל הארץ. משלוח חינם בהזמנה מעל ₪150.</p>"
+          }
+        },
+        {
+          "type": "qa",
+          "settings": {
+            "question": "אפשר להחזיר?",
+            "answer": "<p>כן. החזר כספי מלא תוך 90 יום מקבלת ההזמנה.</p>"
+          }
+        },
+        {
+          "type": "qa",
+          "settings": {
+            "question": "לא התחברתם?",
+            "answer": "<p>צרו איתנו קשר ונמצא פתרון.</p>"
+          }
+        },
+        {
+          "type": "qa",
+          "settings": {
+            "question": "אילו אמצעי תשלום יש?",
+            "answer": "<p>כרטיס אשראי, Bit ו־Apple Pay, דרך עמוד תשלום מאובטח של Shopify.</p>"
+          }
+        },
+        {
+          "type": "qa",
+          "settings": {
+            "question": "איך מדברים איתכם?",
+            "answer": "<p>[דרוש מידע: מספר וואטסאפ וכתובת מייל לשירות]</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

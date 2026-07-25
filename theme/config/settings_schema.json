@@ -1,0 +1,364 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Pawly",
+    "theme_version": "2.0.0",
+    "theme_author": "Pawly",
+    "theme_documentation_url": "https://getpawly.co.il",
+    "theme_support_url": "https://getpawly.co.il"
+  },
+
+  {
+    "name": "צבעים",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "כל צבעי החנות נשלטים מכאן. שינוי כאן משנה את כל האתר — אין צבעים קבועים בקוד."
+      },
+      {
+        "type": "color",
+        "id": "color_clay",
+        "label": "טרקוטה (צבע המותג)",
+        "default": "#AE5930",
+        "info": "לוגו, כותרות, מסגרות. נדגם מהלוגו."
+      },
+      {
+        "type": "color",
+        "id": "color_cream",
+        "label": "קרם (רקע העמוד)",
+        "default": "#F1EBD5"
+      },
+      {
+        "type": "color",
+        "id": "color_ink",
+        "label": "טקסט",
+        "default": "#2A211C",
+        "info": "שחור חמים. אפור־שחור ניטרלי נראה עכור על קרם."
+      },
+      {
+        "type": "color",
+        "id": "color_action",
+        "label": "צבע פעולה (כפתורים ומחירים)",
+        "default": "#FF7A59",
+        "info": "לכפתורים, מחירים ומונה הסל בלבד."
+      },
+      {
+        "type": "color",
+        "id": "color_sky",
+        "label": "תכלת (מבטאים)",
+        "default": "#4FC3F7",
+        "info": "לשימוש מדוד: מסגרת פוקוס, סימוני מלאי, סריקת האור בכרטיסים."
+      },
+      {
+        "type": "color",
+        "id": "color_sand",
+        "label": "חול (משטחי כרטיסים וקווים)",
+        "default": "#E4D8BC"
+      },
+      {
+        "type": "color",
+        "id": "color_on_dark",
+        "label": "טקסט על רקע כהה",
+        "default": "#FBF7EC"
+      }
+    ]
+  },
+
+  {
+    "name": "טיפוגרפיה",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "הגופנים (Suez One לכותרות, Assistant לטקסט) מותקנים בתוך הערכה ולא נטענים מגוגל."
+      },
+      {
+        "type": "range",
+        "id": "type_base_size",
+        "label": "גודל טקסט בסיס",
+        "min": 15,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 17
+      },
+      {
+        "type": "range",
+        "id": "type_display_scale",
+        "label": "עוצמת הכותרות",
+        "min": 90,
+        "max": 130,
+        "step": 5,
+        "unit": "%",
+        "default": 100
+      },
+      {
+        "type": "select",
+        "id": "type_display_font",
+        "label": "גופן הכותרות",
+        "options": [
+          { "value": "display", "label": "Suez One" },
+          { "value": "body", "label": "Assistant (בלי גופן תצוגה)" }
+        ],
+        "default": "display"
+      }
+    ]
+  },
+
+  {
+    "name": "מותג ולוגו",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo_full",
+        "label": "לוגו מלא (סמל + שם)",
+        "info": "PNG שקוף או SVG. חובה שקוף — רקע קרם אפוי בתמונה נראה שבור על כל משטח כהה."
+      },
+      {
+        "type": "image_picker",
+        "id": "logo_mark",
+        "label": "סמל בלבד (הכפה)",
+        "info": "לכותרת הדביקה במובייל, ל־favicon ולסימן המים על כרטיסי מוצר."
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "רוחב הלוגו במחשב",
+        "min": 90,
+        "max": 260,
+        "step": 10,
+        "unit": "px",
+        "default": 150
+      },
+      {
+        "type": "range",
+        "id": "logo_width_mobile",
+        "label": "רוחב הלוגו במובייל",
+        "min": 60,
+        "max": 180,
+        "step": 10,
+        "unit": "px",
+        "default": 104
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "מרובע, 96×96 ומעלה."
+      },
+      {
+        "type": "image_picker",
+        "id": "social_share_image",
+        "label": "תמונת שיתוף (OG)",
+        "info": "1200×630. מופיעה כשמשתפים קישור לחנות."
+      }
+    ]
+  },
+
+  {
+    "name": "כרטיסי מוצר",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "card_watermark_enable",
+        "label": "סימן מים של Pawly על תמונות מוצר",
+        "default": true,
+        "info": "כבו את זה ברגע שיש צילומי מוצר אמיתיים עם האריזה."
+      },
+      {
+        "type": "range",
+        "id": "card_watermark_opacity",
+        "label": "שקיפות סימן המים",
+        "min": 20,
+        "max": 90,
+        "step": 5,
+        "unit": "%",
+        "default": 55
+      },
+      {
+        "type": "select",
+        "id": "card_image_ratio",
+        "label": "יחס תמונה בכרטיס",
+        "options": [
+          { "value": "square", "label": "ריבוע (1:1)" },
+          { "value": "portrait", "label": "לאורך (4:5)" }
+        ],
+        "default": "square"
+      },
+      {
+        "type": "checkbox",
+        "id": "card_quick_add",
+        "label": "כפתור הוספה מהירה",
+        "default": true
+      }
+    ]
+  },
+
+  {
+    "name": "סל ומכירה נלווית",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "cart_drawer_enable",
+        "label": "סל נפתח מהצד",
+        "default": true,
+        "info": "כשמכובה — כל הוספה לסל עוברת לעמוד /cart. עמוד הסל עובד תמיד, גם בלי JavaScript."
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_free_shipping_bar",
+        "label": "פס התקדמות למשלוח חינם",
+        "default": true
+      },
+      {
+        "type": "number",
+        "id": "cart_free_shipping_threshold",
+        "label": "סף משלוח חינם (₪)",
+        "default": 150
+      },
+      {
+        "type": "header",
+        "content": "מכירה נלווית"
+      },
+      {
+        "type": "text",
+        "id": "upsell_variant_id",
+        "label": "מזהה וריאנט למכירה נלווית",
+        "default": "48383836881134",
+        "info": "משחת לחות 30ג. אפשר להחליף בכל וריאנט אחר — המזהה לא קבוע בקוד."
+      },
+      {
+        "type": "text",
+        "id": "upsell_title",
+        "label": "כותרת המכירה הנלווית",
+        "default": "הוסיפו גם משחת לחות"
+      }
+    ]
+  },
+
+  {
+    "name": "תנועה ואנימציה",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "כל אנימציה מכבדת אוטומטית את הגדרת “צמצום תנועה” של המשתמש במערכת ההפעלה."
+      },
+      {
+        "type": "checkbox",
+        "id": "motion_enable",
+        "label": "אנימציות גלילה",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "motion_tilt",
+        "label": "הטיה תלת־ממדית בכרטיסי קטגוריה",
+        "default": true,
+        "info": "פועל רק בעכבר. במגע — אין הטיה."
+      }
+    ]
+  },
+
+  {
+    "name": "יצירת קשר",
+    "settings": [
+      {
+        "type": "text",
+        "id": "contact_whatsapp",
+        "label": "מספר וואטסאפ",
+        "info": "בפורמט בינלאומי בלי סימנים, למשל 972501234567.",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "contact_email",
+        "label": "מייל לשירות",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "contact_phone",
+        "label": "טלפון",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "contact_hours",
+        "label": "שעות מענה",
+        "default": ""
+      },
+      {
+        "type": "text",
+        "id": "business_details",
+        "label": "פרטי העסק (ח.פ. / כתובת)",
+        "default": ""
+      }
+    ]
+  },
+
+  {
+    "name": "רשתות חברתיות",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "שדה ריק = האייקון לא מוצג. עדיף בלי אייקון מאשר אייקון שלא מוביל לשום מקום."
+      },
+      {
+        "type": "url",
+        "id": "social_instagram",
+        "label": "אינסטגרם"
+      },
+      {
+        "type": "url",
+        "id": "social_facebook",
+        "label": "פייסבוק"
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok",
+        "label": "טיקטוק"
+      }
+    ]
+  },
+
+  {
+    "name": "אמצעי תשלום",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "payment_icons_enable",
+        "label": "הצגת אייקוני תשלום בפוטר",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_visa",
+        "label": "Visa",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_mastercard",
+        "label": "Mastercard",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_amex",
+        "label": "American Express",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_bit",
+        "label": "Bit",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "payment_applepay",
+        "label": "Apple Pay",
+        "default": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,72 @@
+<div class="pawly-container pawly-section">
+  <div class="page-head">
+    <h1>{{ 'general.search.title' | t }}</h1>
+
+    <form action="{{ routes.search_url }}" method="get" role="search" class="narrow">
+      <div class="newsletter__form" style="margin: 0 auto">
+        <label class="visually-hidden" for="search-input">{{ 'general.search.title' | t }}</label>
+        <input
+          id="search-input"
+          class="input"
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="{{ 'general.search.placeholder' | t }}"
+        >
+        <button type="submit" class="btn btn--clay">{{ 'general.search.submit' | t }}</button>
+      </div>
+    </form>
+  </div>
+
+  {%- if search.performed -%}
+    {%- if search.results_count > 0 -%}
+      <p class="collection__count" style="text-align: center; margin-bottom: var(--sp-5)">
+        {{- 'general.search.results_count' | t: count: search.results_count -}}
+      </p>
+
+      {%- paginate search.results by 12 -%}
+        <div class="product-grid" style="--grid-cols: 4">
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}
+              <div class="reveal">{% render 'product-card', product: item %}</div>
+            {%- else -%}
+              <div class="card-panel reveal">
+                <h3 style="font-size: var(--step-1)">
+                  <a href="{{ item.url }}">{{ item.title }}</a>
+                </h3>
+                <p class="pawly-card__meta">{{ item.content | strip_html | truncatewords: 22 }}</p>
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="pagination" aria-label="{{ 'general.pagination.label' | t }}">
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <a href="{{ part.url }}">{{ part.title }}</a>
+              {%- else -%}
+                <span {% if part.title == paginate.current_page %}aria-current="page"{% endif %}>
+                  {{- part.title -}}
+                </span>
+              {%- endif -%}
+            {%- endfor -%}
+          </nav>
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- else -%}
+      <div class="empty-state">
+        <p>{{ 'general.search.no_results' | t: terms: search.terms }}</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--outline">
+          {{ 'general.404.shop' | t }}
+        </a>
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "חיפוש"
+}
+{% endschema %}

@@ -1,0 +1,37 @@
+<div class="pawly-container pawly-section">
+  <div class="page-head">
+    <h1>{{ page_title }}</h1>
+  </div>
+
+  <div class="cat-grid">
+    {%- for collection in collections -%}
+      <a href="{{ collection.url }}" class="cat-card reveal" data-tilt>
+        <div class="cat-card__media">
+          {%- if collection.featured_image -%}
+            <img
+              src="{{ collection.featured_image | image_url: width: 900 }}"
+              alt="{{ collection.featured_image.alt | default: collection.title | escape }}"
+              width="{{ collection.featured_image.width }}"
+              height="{{ collection.featured_image.height }}"
+              loading="lazy"
+            >
+          {%- else -%}
+            {% render 'media-placeholder', label: '' %}
+          {%- endif -%}
+        </div>
+        <div class="cat-card__overlay">
+          <h2 class="cat-card__title">{{ collection.title }}</h2>
+          <span class="cat-card__cta">
+            {{ 'sections.categories.cta' | t }}{% render 'icon-arrow' %}
+          </span>
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "רשימת אוספים"
+}
+{% endschema %}

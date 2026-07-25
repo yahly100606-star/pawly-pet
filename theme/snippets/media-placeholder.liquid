@@ -1,0 +1,25 @@
+{% comment %}
+  Branded placeholder for products with no image — which is currently all six.
+  Never a broken-image icon, never a collapsed grid cell.
+
+  Accepts:
+    label  optional caption. Pass label: '' to render the mark alone.
+{% endcomment %}
+
+<div class="pawly-card__placeholder">
+  {%- if settings.logo_mark != blank -%}
+    <img
+      src="{{ settings.logo_mark | image_url: width: 240 }}"
+      alt=""
+      width="120"
+      height="120"
+      loading="lazy"
+      aria-hidden="true"
+    >
+  {%- else -%}
+    {% render 'icon-paw' %}
+  {%- endif -%}
+  {%- if label != blank -%}
+    <span>{{ label }}</span>
+  {%- endif -%}
+</div>

@@ -1,0 +1,7 @@
+node_modules/
+.DS_Store
+*.log
+
+# Shopify CLI local state
+.shopify/
+theme/.shopify/

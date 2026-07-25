@@ -1,0 +1,200 @@
+{%- liquid
+  comment
+    Sticky header. Transparent over the hero on the homepage, solidifying to
+    cream past 80px (pawly.js). Every other template starts solid.
+    RTL: logo on the right, nav centred, actions on the left — the grid does
+    that automatically because the document is dir="rtl".
+  endcomment
+
+  assign transparent = false
+  if section.settings.transparent_over_hero and request.page_type == 'index'
+    assign transparent = true
+  endif
+-%}
+
+<header
+  class="header{% unless transparent %} header--opaque{% endunless %}"
+  data-pawly-header
+  {% if transparent %}data-transparent{% endif %}
+>
+  <div class="pawly-container header__inner">
+    <a href="{{ routes.root_url }}" class="header__logo" aria-label="{{ shop.name }}">
+      {%- if settings.logo_full != blank -%}
+        <img
+          src="{{ settings.logo_full | image_url: width: 520 }}"
+          srcset="
+            {{ settings.logo_full | image_url: width: 260 }} 260w,
+            {{ settings.logo_full | image_url: width: 520 }} 520w
+          "
+          sizes="{{ settings.logo_width }}px"
+          alt="{{ 'brand.logo_alt' | t }}"
+          width="{{ settings.logo_full.width }}"
+          height="{{ settings.logo_full.height }}"
+          fetchpriority="high"
+        >
+      {%- elsif settings.logo_mark != blank -%}
+        <img
+          src="{{ settings.logo_mark | image_url: width: 200 }}"
+          alt="{{ 'brand.logo_alt' | t }}"
+          width="{{ settings.logo_mark.width }}"
+          height="{{ settings.logo_mark.height }}"
+          fetchpriority="high"
+        >
+      {%- else -%}
+        {%- comment -%}
+          No logo uploaded yet. A wordmark is a deliberate-looking fallback;
+          a broken image is not.
+        {%- endcomment -%}
+        <span aria-hidden="true" style="width: 30px; color: var(--pawly-clay)">
+          {% render 'icon-paw' %}
+        </span>
+        <span>{{ shop.name }}</span>
+      {%- endif -%}
+    </a>
+
+    <nav class="header__nav" aria-label="{{ 'sections.header.menu' | t }}">
+      <ul class="header__nav-list">
+        {%- for link in section.settings.menu.links -%}
+          <li>
+            <a
+              href="{{ link.url }}"
+              class="header__nav-link"
+              {% if link.active %}aria-current="page"{% endif %}
+            >
+              {{ link.title }}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <a
+        href="{{ routes.search_url }}"
+        class="header__action"
+        aria-label="{{ 'sections.header.search' | t }}"
+      >
+        {% render 'icon-search' %}
+      </a>
+
+      {%- if shop.customer_accounts_enabled -%}
+        <a
+          href="{{ routes.account_url }}"
+          class="header__action"
+          aria-label="{{ 'sections.header.account' | t }}"
+        >
+          {% render 'icon-account' %}
+        </a>
+      {%- endif -%}
+
+      {%- comment -%}
+        An <a> to /cart, so it works with JS off. pawly.js intercepts the click
+        and opens the drawer instead when the drawer is enabled.
+      {%- endcomment -%}
+      <a
+        href="{{ routes.cart_url }}"
+        class="header__action"
+        data-cart-open
+        aria-label="{{ 'sections.header.cart' | t }}"
+      >
+        {% render 'icon-cart' %}
+        <span
+          class="header__cart-count"
+          data-cart-count
+          {% if cart.item_count == 0 %}hidden{% endif %}
+        >{{ cart.item_count }}</span>
+      </a>
+
+      <button
+        type="button"
+        class="header__action header__burger"
+        data-nav-open
+        aria-expanded="false"
+        aria-controls="pawly-nav-drawer"
+        aria-label="{{ 'sections.header.menu_open' | t }}"
+      >
+        {% render 'icon-menu' %}
+      </button>
+    </div>
+  </div>
+</header>
+
+{%- comment -%} Full-screen mobile drawer. Plain links, so it works with JS off too. {%- endcomment -%}
+<div
+  class="nav-drawer"
+  id="pawly-nav-drawer"
+  data-nav-drawer
+  role="dialog"
+  aria-modal="true"
+  aria-label="{{ 'sections.header.menu' | t }}"
+  aria-hidden="true"
+>
+  <div class="nav-drawer__head">
+    <span class="header__logo">
+      {%- if settings.logo_mark != blank -%}
+        <img
+          src="{{ settings.logo_mark | image_url: width: 160 }}"
+          alt="{{ 'brand.logo_alt' | t }}"
+          width="60"
+          height="60"
+          style="width: 46px"
+        >
+      {%- else -%}
+        {{ shop.name }}
+      {%- endif -%}
+    </span>
+    <button
+      type="button"
+      class="header__action"
+      data-nav-close
+      aria-label="{{ 'sections.header.menu_close' | t }}"
+    >
+      {% render 'icon-close' %}
+    </button>
+  </div>
+
+  <div class="nav-drawer__body">
+    <ul class="nav-drawer__list">
+      {%- for link in section.settings.menu.links -%}
+        <li>
+          <a href="{{ link.url }}" class="nav-drawer__link">{{ link.title }}</a>
+          {%- if link.links.size > 0 -%}
+            <ul style="margin-top: var(--sp-2); padding-inline-start: var(--sp-4)">
+              {%- for child in link.links -%}
+                <li>
+                  <a href="{{ child.url }}" class="header__nav-link">{{ child.title }}</a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+
+  <div class="nav-drawer__foot">
+    <p style="margin: 0">{{ 'brand.shipping' | t }}</p>
+    <p style="margin: 0">{{ 'brand.guarantee' | t }}</p>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "כותרת",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "תפריט",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_over_hero",
+      "label": "כותרת שקופה מעל ההירו בדף הבית",
+      "default": true,
+      "info": "בגלילה מעל 80 פיקסלים הכותרת נעשית אטומה. בשאר העמודים היא אטומה תמיד."
+    }
+  ]
+}
+{% endschema %}

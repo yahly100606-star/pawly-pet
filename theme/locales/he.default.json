@@ -1,0 +1,416 @@
+{
+  "general": {
+    "meta": {
+      "tags": "מתויג ב־{{ tags }}",
+      "page": "עמוד {{ page }}"
+    },
+    "accessibility": {
+      "skip_to_content": "דילוג לתוכן",
+      "close": "סגירה",
+      "open": "פתיחה",
+      "menu": "תפריט",
+      "next": "הבא",
+      "previous": "הקודם",
+      "loading": "טוען…",
+      "unit_price_separator": "ל־",
+      "refresh_page": "בחירה גורמת לרענון העמוד"
+    },
+    "search": {
+      "title": "חיפוש",
+      "placeholder": "מה אתם מחפשים?",
+      "submit": "חפשו",
+      "results_for": "תוצאות עבור “{{ terms }}”",
+      "no_results": "לא מצאנו כלום עבור “{{ terms }}”. נסו מילה אחרת.",
+      "results_count": {
+        "one": "תוצאה אחת",
+        "other": "{{ count }} תוצאות"
+      }
+    },
+    "pagination": {
+      "label": "ניווט בעמודים",
+      "previous": "הקודם",
+      "next": "הבא",
+      "page": "עמוד {{ number }}"
+    },
+    "newsletter": {
+      "heading": "הצטרפו לחבורה של Pawly",
+      "body": "מדי פעם מייל עם מוצר חדש או טיפ קצר. בלי ספאם, ואפשר להסיר את עצמכם בקליק.",
+      "placeholder": "כתובת המייל שלכם",
+      "submit": "הצטרפו",
+      "success": "נרשמתם. נתראה בתיבה.",
+      "error": "משהו השתבש. בדקו את הכתובת ונסו שוב."
+    },
+    "share": {
+      "label": "שיתוף",
+      "copied": "הקישור הועתק"
+    },
+    "404": {
+      "title": "העמוד הזה לא קיים",
+      "body": "אולי הקישור ישן, אולי נפלה טעות בכתובת. אפשר לחזור לדף הבית או לעבור ישר לחנות.",
+      "home": "לדף הבית",
+      "shop": "לכל המוצרים"
+    }
+  },
+
+  "brand": {
+    "name": "Pawly",
+    "guarantee": "החזר כספי מלא תוך 90 יום",
+    "guarantee_name": "הבטחת Pawly",
+    "shipping": "משלוח חינם בהזמנה מעל ₪150, לכל הארץ",
+    "shipping_short": "משלוח חינם מעל ₪150",
+    "delivery_window": "10–16 ימי עסקים",
+    "logo_alt": "Pawly"
+  },
+
+  "sections": {
+    "announcement": {
+      "default": "🚚 משלוח חינם מעל ₪150 · החזר כספי מלא תוך 90 יום",
+      "dismiss": "סגירת ההודעה"
+    },
+    "header": {
+      "cart_count": {
+        "one": "פריט אחד בסל",
+        "other": "{{ count }} פריטים בסל"
+      },
+      "cart": "סל הקניות",
+      "account": "החשבון שלי",
+      "search": "חיפוש",
+      "menu": "תפריט",
+      "menu_open": "פתיחת התפריט",
+      "menu_close": "סגירת התפריט"
+    },
+    "hero": {
+      "heading": "טיפוח בבית שגם הם אוהבים",
+      "subheading": "מברשות, ניקוי כפות ומשחה לכריות. הכול בבית, בלי מספרה ובלי מאבק.",
+      "cta": "לכל המוצרים",
+      "footnote": "משלוח חינם מעל ₪150 · החזר כספי מלא תוך 90 יום",
+      "scroll_hint": "גללו למטה",
+      "video_fallback": "סרטון קצר של טיפוח בבית"
+    },
+    "trust": {
+      "shipping_title": "משלוח חינם מעל ₪150",
+      "shipping_body": "לכל הארץ",
+      "returns_title": "החזר כספי מלא תוך 90 יום",
+      "returns_body": "לא התאים? מחזירים",
+      "support_title": "שירות בוואטסאפ",
+      "support_body": "[דרוש מידע: שעות מענה]",
+      "secure_title": "תשלום מאובטח",
+      "secure_body": "כרטיס אשראי, Bit, Apple Pay"
+    },
+    "categories": {
+      "heading": "מה מחפשים היום?",
+      "dogs": "כלבים",
+      "cats": "חתולים",
+      "paws": "טיפוח כפות",
+      "cta": "לצפייה"
+    },
+    "featured": {
+      "heading": "המוצרים שלנו",
+      "subheading": "שישה כלים, כל אחד לבעיה אחת ספציפית.",
+      "view_all": "לכל המוצרים"
+    },
+    "how_it_works": {
+      "heading": "איך זה עובד",
+      "step_1_title": "מזמינים",
+      "step_1_body": "בוחרים מוצר, משלמים, וזהו. משלוח חינם מעל ₪150.",
+      "step_2_title": "מגיע תוך 10–16 ימי עסקים",
+      "step_2_body": "שולחים לכל הארץ. מעדכנים אתכם במייל כשההזמנה יוצאת.",
+      "step_3_title": "לא מרוצים? מחזירים",
+      "step_3_body": "החזר כספי מלא תוך 90 יום מקבלת ההזמנה."
+    },
+    "testimonials": {
+      "heading": "מה אומרים עלינו",
+      "placeholder_notice": "הביקורות כאן הן דוגמאות למילוי המקום. ביקורות אמיתיות ייכנסו לכאן ברגע שיהיו.",
+      "placeholder_prefix": "[דוגמה — להחלפה]"
+    },
+    "faq": {
+      "heading": "שאלות שחוזרות",
+      "q_shipping": "כמה זמן לוקח המשלוח?",
+      "a_shipping": "10–16 ימי עסקים לכל הארץ. משלוח חינם בהזמנה מעל ₪150.",
+      "q_returns": "אפשר להחזיר?",
+      "a_returns": "כן. החזר כספי מלא תוך 90 יום מקבלת ההזמנה.",
+      "q_notforme": "לא התחברתם?",
+      "a_notforme": "צרו איתנו קשר ונמצא פתרון.",
+      "q_payment": "אילו אמצעי תשלום יש?",
+      "a_payment": "כרטיס אשראי, Bit ו־Apple Pay, דרך עמוד תשלום מאובטח של Shopify.",
+      "q_contact": "איך מדברים איתכם?",
+      "a_contact": "[דרוש מידע: מספר וואטסאפ וכתובת מייל לשירות]"
+    },
+    "footer": {
+      "tagline": "כלים לטיפוח כלבים וחתולים בבית.",
+      "links_heading": "ניווט",
+      "contact_heading": "יצירת קשר",
+      "social_heading": "עוקבים אחרינו",
+      "email_label": "מייל",
+      "phone_label": "טלפון",
+      "hours_label": "שעות פעילות",
+      "copyright": "© {{ year }} Pawly",
+      "payment_heading": "אמצעי תשלום"
+    }
+  },
+
+  "products": {
+    "product": {
+      "add_to_cart": "הוספה לסל",
+      "adding": "מוסיף…",
+      "added": "נוסף לסל",
+      "sold_out": "אזל מהמלאי",
+      "unavailable": "לא זמין",
+      "unavailable_variant": "הצירוף הזה לא זמין",
+      "quantity": "כמות",
+      "quantity_increase": "הוספת יחידה",
+      "quantity_decrease": "הפחתת יחידה",
+      "price": "מחיר",
+      "regular_price": "מחיר רגיל",
+      "sale_price": "מחיר מבצע",
+      "unit_price": "מחיר ליחידה",
+      "sku": "מק״ט",
+      "in_stock": "במלאי",
+      "vendor": "מותג",
+      "view_details": "לפרטים",
+      "quick_add": "הוספה מהירה",
+      "choose_options": "בחירת אפשרויות",
+      "no_image": "עדיין אין תמונה למוצר הזה",
+      "gallery_label": "תמונות המוצר",
+      "thumbnail": "תמונה {{ index }}",
+      "zoom_hint": "הקישו להגדלה",
+      "share": "שיתוף המוצר"
+    },
+    "accordion": {
+      "description": "תיאור",
+      "in_the_box": "מה בקופסה",
+      "shipping": "משלוחים והחזרות",
+      "faq": "שאלות",
+      "shipping_body": "משלוח חינם בהזמנה מעל ₪150, לכל הארץ. זמן אספקה 10–16 ימי עסקים. החזר כספי מלא תוך 90 יום מקבלת ההזמנה.",
+      "in_the_box_empty": "[דרוש מידע: תכולת האריזה למוצר הזה]"
+    },
+    "compare": {
+      "heading": "איזו גרסה מתאימה לכם?",
+      "choose": "בחרו",
+      "selected": "נבחר",
+      "option": "אפשרות",
+      "price": "מחיר",
+      "availability": "זמינות"
+    },
+    "bundle": {
+      "heading": "כמה יחידות?",
+      "note": "כדאי אם יש לכם יותר מחיה אחת בבית.",
+      "single": "יחידה אחת",
+      "pair": "שתי יחידות",
+      "trio": "שלוש יחידות"
+    },
+    "upsell": {
+      "heading": "מוסיפים גם?",
+      "add": "הוספה",
+      "added": "נוסף",
+      "in_cart": "כבר בסל"
+    },
+    "facets": {
+      "filter": "סינון",
+      "sort": "מיון",
+      "clear": "ניקוי",
+      "clear_all": "ניקוי הכול",
+      "apply": "החלה",
+      "results": {
+        "one": "מוצר אחד",
+        "other": "{{ count }} מוצרים"
+      },
+      "empty": "אין מוצרים שמתאימים לסינון הזה.",
+      "sort_options": {
+        "manual": "מומלצים",
+        "price_asc": "מחיר: מהנמוך לגבוה",
+        "price_desc": "מחיר: מהגבוה לנמוך",
+        "title_asc": "לפי שם א׳–ת׳",
+        "created_desc": "החדשים ביותר"
+      }
+    }
+  },
+
+  "cart": {
+    "general": {
+      "title": "סל הקניות",
+      "empty": "הסל ריק",
+      "empty_body": "עוד לא הוספתם כלום.",
+      "continue_shopping": "המשך קנייה",
+      "checkout": "מעבר לתשלום",
+      "subtotal": "סכום ביניים",
+      "shipping_note": "המשלוח ודמי המשלוח מחושבים בעמוד התשלום.",
+      "free_shipping_progress": "עוד {{ amount }} למשלוח חינם",
+      "free_shipping_reached": "יש לכם משלוח חינם",
+      "remove": "הסרה",
+      "quantity": "כמות",
+      "product": "מוצר",
+      "total": "סה״כ",
+      "note": "הערה להזמנה",
+      "note_placeholder": "משהו שכדאי שנדע?",
+      "update": "עדכון",
+      "close": "סגירת הסל",
+      "item_added": "המוצר נוסף לסל",
+      "error": "לא הצלחנו לעדכן את הסל. נסו שוב."
+    }
+  },
+
+  "customer": {
+    "account": {
+      "title": "החשבון שלי",
+      "details": "פרטי החשבון",
+      "view_addresses": "הכתובות שלי",
+      "return": "חזרה לחשבון"
+    },
+    "activate_account": {
+      "title": "הפעלת החשבון",
+      "subtext": "בחרו סיסמה כדי להפעיל את החשבון.",
+      "submit": "הפעלה",
+      "cancel": "ביטול ההזמנה",
+      "password": "סיסמה",
+      "password_confirm": "אישור הסיסמה"
+    },
+    "addresses": {
+      "title": "כתובות",
+      "default": "כתובת ברירת מחדל",
+      "add_new": "הוספת כתובת",
+      "edit_address": "עריכת כתובת",
+      "first_name": "שם פרטי",
+      "last_name": "שם משפחה",
+      "company": "חברה",
+      "address1": "כתובת",
+      "address2": "דירה / כניסה",
+      "city": "עיר",
+      "country": "מדינה",
+      "province": "מחוז",
+      "zip": "מיקוד",
+      "phone": "טלפון",
+      "set_default": "קביעה ככתובת ברירת מחדל",
+      "add": "שמירה",
+      "update": "עדכון",
+      "cancel": "ביטול",
+      "edit": "עריכה",
+      "delete": "מחיקה",
+      "delete_confirm": "למחוק את הכתובת הזו?"
+    },
+    "login": {
+      "title": "כניסה לחשבון",
+      "email": "מייל",
+      "password": "סיסמה",
+      "forgot_password": "שכחתם סיסמה?",
+      "sign_in": "כניסה",
+      "guest_title": "אין לכם חשבון?",
+      "guest_continue": "המשך כאורח",
+      "create_account": "פתיחת חשבון",
+      "no_account": "עוד אין לכם חשבון?"
+    },
+    "recover_password": {
+      "title": "איפוס סיסמה",
+      "subtext": "נשלח לכם מייל עם קישור לאיפוס.",
+      "submit": "שליחה",
+      "cancel": "ביטול",
+      "success": "שלחנו לכם מייל. בדקו את התיבה."
+    },
+    "reset_password": {
+      "title": "בחירת סיסמה חדשה",
+      "subtext": "בחרו סיסמה חדשה לחשבון.",
+      "password": "סיסמה",
+      "password_confirm": "אישור הסיסמה",
+      "submit": "שמירה"
+    },
+    "register": {
+      "title": "פתיחת חשבון",
+      "first_name": "שם פרטי",
+      "last_name": "שם משפחה",
+      "email": "מייל",
+      "password": "סיסמה",
+      "submit": "פתיחת חשבון",
+      "has_account": "כבר יש לכם חשבון?",
+      "sign_in": "כניסה"
+    },
+    "orders": {
+      "title": "ההזמנות שלי",
+      "order_number": "הזמנה",
+      "date": "תאריך",
+      "payment_status": "סטטוס תשלום",
+      "fulfillment_status": "סטטוס משלוח",
+      "total": "סה״כ",
+      "none": "עוד לא ביצעתם הזמנה."
+    },
+    "order": {
+      "title": "הזמנה {{ name }}",
+      "date_html": "בוצעה ב־{{ date }}",
+      "cancelled_html": "ההזמנה בוטלה ב־{{ date }}",
+      "cancelled_reason": "סיבה: {{ reason }}",
+      "billing_address": "כתובת לחיוב",
+      "shipping_address": "כתובת למשלוח",
+      "payment_status": "סטטוס תשלום",
+      "fulfillment_status": "סטטוס משלוח",
+      "product": "מוצר",
+      "sku": "מק״ט",
+      "price": "מחיר",
+      "quantity": "כמות",
+      "total": "סה״כ",
+      "subtotal": "סכום ביניים",
+      "shipping": "משלוח",
+      "tax": "מע״מ",
+      "discount": "הנחה",
+      "track_shipment": "מעקב משלוח"
+    }
+  },
+
+  "blogs": {
+    "article": {
+      "back_to_blog": "חזרה לבלוג",
+      "read_more": "המשך קריאה",
+      "posted_on": "פורסם ב־{{ date }}",
+      "by_author": "מאת {{ author }}",
+      "empty": "עוד אין פוסטים כאן."
+    },
+    "comments": {
+      "title": "תגובות",
+      "name": "שם",
+      "email": "מייל",
+      "message": "תגובה",
+      "post": "שליחה",
+      "success": "התגובה נשלחה.",
+      "moderated": "התגובה נשלחה ותפורסם אחרי אישור.",
+      "count": {
+        "one": "תגובה אחת",
+        "other": "{{ count }} תגובות"
+      }
+    }
+  },
+
+  "gift_cards": {
+    "issued": {
+      "title": "כרטיס מתנה של Pawly",
+      "subtext": "הנה כרטיס המתנה שלכם",
+      "initial_value": "ערך הכרטיס",
+      "remaining": "יתרה: {{ balance }}",
+      "expires": "בתוקף עד {{ date }}",
+      "copy_code": "העתקת הקוד",
+      "copied": "הקוד הועתק",
+      "shop": "לחנות",
+      "print": "הדפסה",
+      "how_to_use": "מזינים את הקוד בעמוד התשלום."
+    }
+  },
+
+  "contact": {
+    "form": {
+      "title": "יצירת קשר",
+      "name": "שם",
+      "email": "מייל",
+      "phone": "טלפון",
+      "message": "ההודעה שלכם",
+      "send": "שליחה",
+      "success": "ההודעה נשלחה. נחזור אליכם."
+    }
+  },
+
+  "info_needed": {
+    "whatsapp": "[דרוש מידע: מספר וואטסאפ]",
+    "email": "[דרוש מידע: כתובת מייל לשירות]",
+    "phone": "[דרוש מידע: טלפון]",
+    "address": "[דרוש מידע: כתובת עסק / ח.פ.]",
+    "hours": "[דרוש מידע: שעות מענה]",
+    "instagram": "[דרוש מידע: קישור אינסטגרם]",
+    "facebook": "[דרוש מידע: קישור פייסבוק]"
+  }
+}

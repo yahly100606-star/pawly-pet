@@ -1,0 +1,85 @@
+{% comment %}
+  Shimmer button — port of the ShimmerButton React component.
+  Pure CSS (two keyframes in pawly.css), so it survives GSAP failing to load,
+  JS being off, and reduced-motion (where the shimmer is dropped and the solid
+  button keeps its hover state).
+
+  Use it ONCE per viewport. It is the primary CTA style — if every button
+  shimmers, none of them do.
+
+  Accepts:
+    label          (required) button text
+    href           renders an <a>; omit to render a <button>
+    type           button type when there is no href. Default: submit
+    name / value   passed through to <button>
+    block          true → full width
+    disabled       true → aria-disabled + disabled
+    id             element id
+    extra_class    extra class names
+    icon           snippet name to render after the label, e.g. 'icon-arrow'
+    attrs          raw extra attributes string, e.g. 'data-cart-open'
+    bg             --bg            default var(--pawly-action)
+    shimmer_color  --shimmer-color default #FFF3EC
+    radius         --radius        default 100px
+    speed          --speed         default 3s
+    spread         --spread        default 90deg
+    cut            --cut           default 0.06em
+{% endcomment %}
+
+{%- liquid
+  assign bg = bg | default: 'var(--pawly-action)'
+  assign shimmer_color = shimmer_color | default: '#FFF3EC'
+  assign radius = radius | default: '100px'
+  assign speed = speed | default: '3s'
+  assign spread = spread | default: '90deg'
+  assign cut = cut | default: '0.06em'
+  assign btn_type = type | default: 'submit'
+
+  capture style
+    echo '--bg:' | append: bg | append: ';'
+    echo '--shimmer-color:' | append: shimmer_color | append: ';'
+    echo '--radius:' | append: radius | append: ';'
+    echo '--speed:' | append: speed | append: ';'
+    echo '--spread:' | append: spread | append: ';'
+    echo '--cut:' | append: cut | append: ';'
+    if block
+      echo 'width:100%;'
+    endif
+  endcapture
+
+  capture classes
+    echo 'shimmer-btn'
+    if extra_class != blank
+      echo ' ' | append: extra_class
+    endif
+  endcapture
+-%}
+
+{%- if href -%}
+  <a
+    href="{{ href }}"
+    class="{{ classes }}"
+    style="{{ style }}"
+    {% if id %}id="{{ id }}"{% endif %}
+    {{ attrs }}
+  >
+    <span class="shimmer-btn__spark" aria-hidden="true"></span>
+    <span>{{ label }}</span>
+    {%- if icon %}{% render icon %}{% endif -%}
+  </a>
+{%- else -%}
+  <button
+    type="{{ btn_type }}"
+    class="{{ classes }}"
+    style="{{ style }}"
+    {% if id %}id="{{ id }}"{% endif %}
+    {% if name %}name="{{ name }}"{% endif %}
+    {% if value %}value="{{ value }}"{% endif %}
+    {% if disabled %}disabled aria-disabled="true"{% endif %}
+    {{ attrs }}
+  >
+    <span class="shimmer-btn__spark" aria-hidden="true"></span>
+    <span>{{ label }}</span>
+    {%- if icon %}{% render icon %}{% endif -%}
+  </button>
+{%- endif -%}

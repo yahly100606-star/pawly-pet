@@ -1,0 +1,472 @@
+{%- liquid
+  comment
+    Scroll-expand hero — port of the ScrollExpandMedia React component.
+
+    Behaviour reproduced:
+      · full-bleed background fading out as the media opens
+      · a centred media frame that opens from a small window to full width
+      · the title splitting on the first space, the halves parting like curtains
+      · below-media content arriving at progress >= 0.75
+
+    Three deliberate departures from the React source, all of them fixes:
+
+    1. GSAP ScrollTrigger pin + scrub instead of hijacking `wheel` and calling
+       preventDefault. The wheel-hijack breaks trackpad momentum, breaks iOS
+       Safari, and fights Shopify's own scroll listeners.
+
+    2. The frame is laid out at its FINAL size and opens via `clip-path: inset`,
+       with the media counter-scaled inside. The React source animates width and
+       height in pixels, which forces layout on every frame — that is why it
+       stuttered. Nothing here touches layout.
+
+    3. Translate directions are computed from document.dir, so the curtains part
+       correctly in RTL instead of being hardcoded LTR.
+
+    Fallbacks: no JS, no GSAP, or prefers-reduced-motion → `hero--static`, which
+    is the fully-open resting state. It looks intentional, not broken.
+  endcomment
+
+  assign heading = section.settings.heading
+  assign words = heading | split: ' '
+  assign first_word = words | first
+  assign rest_words = ''
+  if words.size > 1
+    assign rest_words = heading | remove_first: first_word | strip
+  endif
+
+  assign video = section.settings.video
+  assign poster = section.settings.poster
+  if poster == blank and video != blank
+    assign poster = video.preview_image
+  endif
+-%}
+
+{%- comment -%}
+  No `hero--static` in the server render. The base CSS state is the fully-open
+  hero, so JS-off visitors get a finished-looking hero; the script below adds
+  `hero--static` (or the collapsed start state) synchronously before first
+  paint, so neither path costs a layout shift.
+{%- endcomment -%}
+<section
+  class="hero"
+  id="hero-{{ section.id }}"
+  data-hero
+>
+  <div class="hero__stage" data-hero-stage>
+    {%- comment -%}
+      Background. This is the LCP element on the homepage, so it is eager with
+      fetchpriority="high" and never lazy.
+    {%- endcomment -%}
+    <div class="hero__bg" data-hero-bg>
+      {%- if section.settings.background != blank -%}
+        <img
+          src="{{ section.settings.background | image_url: width: 2400 }}"
+          srcset="
+            {{ section.settings.background | image_url: width: 800 }} 800w,
+            {{ section.settings.background | image_url: width: 1200 }} 1200w,
+            {{ section.settings.background | image_url: width: 1800 }} 1800w,
+            {{ section.settings.background | image_url: width: 2400 }} 2400w
+          "
+          sizes="100vw"
+          alt=""
+          width="{{ section.settings.background.width }}"
+          height="{{ section.settings.background.height }}"
+          fetchpriority="high"
+          decoding="async"
+        >
+      {%- endif -%}
+    </div>
+
+    <h1 class="hero__title" data-hero-title>
+      <span data-hero-title-a>{{ first_word }}</span>
+      {%- if rest_words != blank -%}
+        <span data-hero-title-b>{{ rest_words }}</span>
+      {%- endif -%}
+    </h1>
+
+    <div class="hero__frame" data-hero-frame>
+      <div class="hero__media" data-hero-media>
+        {%- comment -%}
+          The poster is a real <img>, always rendered. If the video fails to
+          load or autoplay is blocked, this stays visible — never an empty
+          black rectangle.
+        {%- endcomment -%}
+        {%- if poster != blank -%}
+          <img
+            src="{{ poster | image_url: width: 1600 }}"
+            srcset="
+              {{ poster | image_url: width: 800 }} 800w,
+              {{ poster | image_url: width: 1600 }} 1600w
+            "
+            sizes="(min-width: 1100px) 1550px, 95vw"
+            alt="{{ section.settings.video_alt | default: heading | escape }}"
+            width="{{ poster.width }}"
+            height="{{ poster.height }}"
+            class="hero__poster"
+            decoding="async"
+          >
+        {%- else -%}
+          {% render 'media-placeholder', label: '' %}
+        {%- endif -%}
+
+        {%- if video != blank -%}
+          {%- comment -%}
+            Sources carry data-src, not src. pawly-hero's script promotes them
+            once it has decided the connection and viewport can afford it —
+            below 480px, or on Save-Data, the poster is all that loads.
+          {%- endcomment -%}
+          <video
+            data-hero-video
+            poster="{% if poster != blank %}{{ poster | image_url: width: 1600 }}{% endif %}"
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-label="{{ section.settings.video_alt | default: heading | escape }}"
+            tabindex="-1"
+          >
+            {%- for source in video.sources -%}
+              {%- if source.format == 'mp4' or source.format == 'webm' -%}
+                <source data-src="{{ source.url }}" type="{{ source.mime_type }}">
+              {%- endif -%}
+            {%- endfor -%}
+          </video>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="hero__content" data-hero-content>
+      {%- if section.settings.subheading != blank -%}
+        <p class="hero__subheading">{{ section.settings.subheading }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.cta_label != blank -%}
+        {%- comment -%}
+          The one shimmer button in this viewport. See CLAUDE.md §6 —
+          if every button shimmers, none of them do.
+        {%- endcomment -%}
+        {% render 'shimmer-button',
+          label: section.settings.cta_label,
+          href: section.settings.cta_link,
+          icon: 'icon-arrow'
+        %}
+      {%- endif -%}
+
+      {%- if section.settings.footnote != blank -%}
+        <p class="hero__footnote">{{ section.settings.footnote }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="hero__scroll-hint" data-hero-hint aria-hidden="true">
+      <span>{{ 'sections.hero.scroll_hint' | t }}</span>
+      {% render 'icon-chevron-down' %}
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var section = document.getElementById('hero-{{ section.id }}');
+    if (!section) return;
+
+    var stage = section.querySelector('[data-hero-stage]');
+    var bg = section.querySelector('[data-hero-bg]');
+    var frame = section.querySelector('[data-hero-frame]');
+    var media = section.querySelector('[data-hero-media]');
+    var titleA = section.querySelector('[data-hero-title-a]');
+    var titleB = section.querySelector('[data-hero-title-b]');
+    var content = section.querySelector('[data-hero-content]');
+    var hint = section.querySelector('[data-hero-hint]');
+    var video = section.querySelector('[data-hero-video]');
+
+    var rtl = (document.dir || document.documentElement.dir) === 'rtl';
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    // Read straight from Liquid. This script runs before PawlyConfig is
+    // defined at the end of <body>, so it must not depend on it.
+    var motionEnabled = {{ settings.motion_enable | json }};
+    var DESKTOP_SHIFT = {{ section.settings.desktop_shift | default: 150 }} / 100;
+    var MOBILE_SHIFT = {{ section.settings.mobile_shift | default: 180 }} / 100;
+
+    /* ------------------------------------------------------------- video */
+
+    function loadVideo() {
+      if (!video) return;
+
+      // Don't spend a visitor's data on decoration.
+      var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      if (conn && conn.saveData) return;
+      if (window.innerWidth < 480 && conn && /2g/.test(conn.effectiveType || '')) return;
+      if (window.innerWidth < 480 && !conn) return;
+
+      var sources = video.querySelectorAll('source[data-src]');
+      if (!sources.length) return;
+
+      sources.forEach(function (s) {
+        s.src = s.getAttribute('data-src');
+        s.removeAttribute('data-src');
+      });
+
+      video.load();
+
+      // If autoplay is refused the poster simply stays. No black rectangle.
+      video.addEventListener('canplay', function () {
+        video.classList.add('is-ready');
+      });
+
+      var play = video.play();
+      if (play && play.catch) play.catch(function () {});
+    }
+
+    if ('IntersectionObserver' in window) {
+      var vio = new IntersectionObserver(
+        function (entries) {
+          if (entries[0].isIntersecting) {
+            loadVideo();
+            vio.disconnect();
+          }
+        },
+        { rootMargin: '200px' }
+      );
+      vio.observe(section);
+    } else {
+      loadVideo();
+    }
+
+    /* ------------------------------------------------------------- motion */
+
+    if (!motionEnabled || reduce.matches) {
+      section.classList.add('hero--static');
+      return;
+    }
+
+    // Closed-state geometry, as a fraction of the open frame.
+    var CLOSED_INLINE = 0.4;
+    var CLOSED_BLOCK = 0.24;
+    var CLOSED_MEDIA_SCALE = 1.28;
+
+    function shiftDistance() {
+      // clientWidth, not innerWidth — innerWidth includes the scrollbar
+      // gutter, and that is the source of the phantom horizontal overflow.
+      var vw = document.documentElement.clientWidth;
+      return vw * (vw < 768 ? MOBILE_SHIFT : DESKTOP_SHIFT);
+    }
+
+    var state = { p: 0 };
+
+    function apply() {
+      var p = state.p;
+      var inv = 1 - p;
+
+      if (bg) bg.style.opacity = String(inv);
+
+      if (p > 0.999) {
+        // Drop the clip entirely at full open, so the frame's shadow — which a
+        // clip-path would otherwise cut away — comes back.
+        frame.style.clipPath = 'none';
+      } else {
+        frame.style.clipPath =
+          'inset(' +
+          CLOSED_BLOCK * inv * 100 +
+          '% ' +
+          CLOSED_INLINE * inv * 100 +
+          '% round var(--radius-lg))';
+      }
+
+      if (media) {
+        media.style.transform = 'scale(' + (1 + (CLOSED_MEDIA_SCALE - 1) * inv) + ')';
+      }
+
+      // Each half moves outward from centre. In RTL the first word already
+      // sits on the right, so it travels right — hence the mirrored sign.
+      var d = shiftDistance() * p;
+      var sign = rtl ? 1 : -1;
+      if (titleA) titleA.style.transform = 'translate3d(' + sign * d + 'px,0,0)';
+      if (titleB) titleB.style.transform = 'translate3d(' + -sign * d + 'px,0,0)';
+
+      if (content) {
+        var reveal = (p - 0.75) / 0.25;
+        reveal = reveal < 0 ? 0 : reveal > 1 ? 1 : reveal;
+        content.style.opacity = String(reveal);
+        content.style.transform = 'translate3d(0,' + (1 - reveal) * 16 + 'px,0)';
+        content.style.pointerEvents = reveal > 0.5 ? 'auto' : 'none';
+      }
+
+      // Twice the fade rate of everything else, so the hint is gone by the
+      // halfway point and never overlaps the content arriving at 0.75.
+      if (hint) hint.style.opacity = String(Math.max(0, 1 - p * 2));
+    }
+
+    /** Give up and show the finished hero. Used when GSAP never arrives, and
+     *  when the visitor turns reduced-motion on mid-session. */
+    function fallbackStatic() {
+      [frame, media, titleA, titleB, content, bg, hint].forEach(function (el) {
+        if (el) el.removeAttribute('style');
+      });
+      section.classList.add('hero--static');
+    }
+
+    // Collapse synchronously, before the first paint, so the hero is never
+    // seen open-then-snapping-shut.
+    apply();
+
+    function boot() {
+      if (!window.gsap || !window.ScrollTrigger) {
+        fallbackStatic();
+        return;
+      }
+      var gsap = window.gsap;
+      gsap.registerPlugin(window.ScrollTrigger);
+
+      [frame, media, titleA, titleB].forEach(function (el) {
+        if (el) el.style.willChange = 'transform';
+      });
+
+      gsap.to(state, {
+        p: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          // Capped at exactly one viewport of scroll, so a touch visitor is
+          // never trapped for longer than one swipe and can always scroll up.
+          end: '+=100%',
+          pin: stage,
+          pinSpacing: true,
+          scrub: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+          onUpdate: apply,
+          onLeave: function () {
+            [frame, media, titleA, titleB].forEach(function (el) {
+              if (el) el.style.willChange = 'auto';
+            });
+          },
+          onEnterBack: function () {
+            [frame, media, titleA, titleB].forEach(function (el) {
+              if (el) el.style.willChange = 'transform';
+            });
+          }
+        }
+      });
+
+      // If the visitor turns reduced-motion on mid-session, stand down.
+      if (reduce.addEventListener) {
+        reduce.addEventListener('change', function () {
+          if (!reduce.matches) return;
+          window.ScrollTrigger.getAll().forEach(function (st) {
+            if (st.trigger === section) st.kill(true);
+          });
+          fallbackStatic();
+        });
+      }
+    }
+
+    // GSAP is loaded with `defer`, so it may not be parsed yet.
+    if (window.gsap && window.ScrollTrigger) {
+      boot();
+    } else {
+      window.addEventListener('load', boot, { once: true });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "הירו",
+  "tag": "section",
+  "class": "section-hero",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "הכותרת נשברת אחרי המילה הראשונה — שני החצאים נפתחים לצדדים בגלילה. כתבו כותרת שהמילה הראשונה שלה עומדת בפני עצמה."
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "כותרת",
+      "default": "טיפוח בבית שגם הם אוהבים"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "תת־כותרת",
+      "default": "מברשות, ניקוי כפות ומשחה לכריות. הכול בבית, בלי מספרה ובלי מאבק."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "טקסט הכפתור",
+      "default": "לכל המוצרים"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "קישור הכפתור"
+    },
+    {
+      "type": "text",
+      "id": "footnote",
+      "label": "שורה מתחת לכפתור",
+      "default": "משלוח חינם מעל ₪150 · החזר כספי מלא תוך 90 יום"
+    },
+    {
+      "type": "header",
+      "content": "מדיה"
+    },
+    {
+      "type": "image_picker",
+      "id": "background",
+      "label": "תמונת רקע",
+      "info": "בהירה ורכה. רקע כהה מאחורי סרטון בהיר יוצר מלבן חד ומכוער. חתכו ל־21:9."
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "סרטון",
+      "info": "מומלץ עד 2.5MB, 1280×720. נטען רק כשההירו מתקרב למסך, ולא נטען בכלל במסכים קטנים או במצב חיסכון בנתונים."
+    },
+    {
+      "type": "image_picker",
+      "id": "poster",
+      "label": "תמונת פוסטר",
+      "info": "הפריים הראשון של הסרטון. מוצגת אם הסרטון לא נטען או שהדפדפן חוסם ניגון אוטומטי."
+    },
+    {
+      "type": "text",
+      "id": "video_alt",
+      "label": "תיאור המדיה לקוראי מסך",
+      "default": "סרטון קצר של טיפוח בבית"
+    },
+    {
+      "type": "header",
+      "content": "תנועה"
+    },
+    {
+      "type": "range",
+      "id": "desktop_shift",
+      "label": "מרחק פתיחת הכותרת במחשב",
+      "min": 100,
+      "max": 200,
+      "step": 10,
+      "unit": "%",
+      "default": 150
+    },
+    {
+      "type": "range",
+      "id": "mobile_shift",
+      "label": "מרחק פתיחת הכותרת במובייל",
+      "min": 120,
+      "max": 220,
+      "step": 10,
+      "unit": "%",
+      "default": 180
+    }
+  ],
+  "presets": [
+    {
+      "name": "הירו"
+    }
+  ]
+}
+{% endschema %}

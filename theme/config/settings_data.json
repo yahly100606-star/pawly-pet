@@ -1,0 +1,54 @@
+{
+  "current": {
+    "color_clay": "#AE5930",
+    "color_cream": "#F1EBD5",
+    "color_ink": "#2A211C",
+    "color_action": "#FF7A59",
+    "color_sky": "#4FC3F7",
+    "color_sand": "#E4D8BC",
+    "color_on_dark": "#FBF7EC",
+
+    "type_base_size": 17,
+    "type_display_scale": 100,
+    "type_display_font": "display",
+
+    "logo_full": null,
+    "logo_mark": null,
+    "logo_width": 150,
+    "logo_width_mobile": 104,
+    "favicon": null,
+    "social_share_image": null,
+
+    "card_watermark_enable": true,
+    "card_watermark_opacity": 55,
+    "card_image_ratio": "square",
+    "card_quick_add": true,
+
+    "cart_drawer_enable": true,
+    "cart_free_shipping_bar": true,
+    "cart_free_shipping_threshold": 150,
+    "upsell_variant_id": "48383836881134",
+    "upsell_title": "הוסיפו גם משחת לחות",
+
+    "motion_enable": true,
+    "motion_tilt": true,
+
+    "contact_whatsapp": "",
+    "contact_email": "",
+    "contact_phone": "",
+    "contact_hours": "",
+    "business_details": "",
+
+    "social_instagram": "",
+    "social_facebook": "",
+    "social_tiktok": "",
+
+    "payment_icons_enable": true,
+    "payment_visa": true,
+    "payment_mastercard": true,
+    "payment_amex": true,
+    "payment_bit": true,
+    "payment_applepay": true
+  },
+  "presets": {}
+}

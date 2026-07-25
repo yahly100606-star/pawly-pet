@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "settings": {
+        "colour_map": "סגול: #7E57C2\nלבן פורצלן: #F4F1EA\nחום חלבי: #C8A882\nירוק: #4CAF7D\nאפור: #9E9E9E\nורד: #E8A0A8\nכחול: #4FA8D8",
+        "show_compare": true,
+        "show_bundle": false,
+        "upsell_handle": "משחת-לחות-בנוסחה-חדשנית-מבית-pawly-לכלב"
+      }
+    }
+  },
+  "order": ["main"]
+}

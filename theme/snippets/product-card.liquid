@@ -1,0 +1,118 @@
+{% comment %}
+  Product card — used by the homepage grid, the collection grid and search.
+
+  Degrades with no image (all six products are currently image-less): the media
+  box keeps its aspect ratio and renders the branded cream placeholder, so the
+  grid never collapses and no broken-image icon ever appears.
+
+  Accepts:
+    product        (required)
+    eager          true → loading="eager" for above-the-fold cards
+    show_quick_add override the theme setting
+    sizes          media sizes attribute
+{% endcomment %}
+
+{%- liquid
+  assign quick_add = show_quick_add
+  if show_quick_add == nil
+    assign quick_add = settings.card_quick_add
+  endif
+  assign sizes = sizes | default: '(min-width: 1100px) 25vw, (min-width: 750px) 33vw, 50vw'
+  assign loading = 'lazy'
+  if eager
+    assign loading = 'eager'
+  endif
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+  endif
+-%}
+
+<div class="pawly-card{% unless product.available %} pawly-card--sold-out{% endunless %}">
+  <div
+    class="pawly-card__media"
+    {% if settings.card_watermark_enable and settings.logo_mark != blank %}
+      data-watermark="true"
+    {% endif %}
+  >
+    {%- unless product.available -%}
+      <span class="pawly-card__badge">{{ 'products.product.sold_out' | t }}</span>
+    {%- else -%}
+      {%- if on_sale -%}
+        {%- assign pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}
+        {%- comment %} dir="ltr" so the minus stays on the left of the number {% endcomment -%}
+        <span class="pawly-card__badge pawly-card__badge--sale" dir="ltr">-{{ pct }}%</span>
+      {%- endif -%}
+    {%- endunless -%}
+
+    {%- if product.featured_media -%}
+      <img
+        src="{{ product.featured_media | image_url: width: 720 }}"
+        srcset="
+          {{ product.featured_media | image_url: width: 360 }} 360w,
+          {{ product.featured_media | image_url: width: 540 }} 540w,
+          {{ product.featured_media | image_url: width: 720 }} 720w,
+          {{ product.featured_media | image_url: width: 1080 }} 1080w
+        "
+        sizes="{{ sizes }}"
+        alt="{{ product.featured_media.alt | default: product.title | escape }}"
+        width="{{ product.featured_media.width }}"
+        height="{{ product.featured_media.height }}"
+        loading="{{ loading }}"
+        decoding="async"
+      >
+    {%- else -%}
+      {% render 'media-placeholder', label: '' %}
+    {%- endif -%}
+  </div>
+
+  <h3 class="pawly-card__title">
+    <a href="{{ product.url }}">{{ product.title }}</a>
+  </h3>
+
+  {%- if product.available -%}
+    <p class="pawly-card__price">
+      {%- if product.price_varies -%}
+        {{ product.price_min | money }}
+        <span class="pawly-card__meta">&ndash; {{ product.price_max | money }}</span>
+      {%- else -%}
+        {{ product.price | money }}
+      {%- endif -%}
+      {%- if on_sale -%}
+        <del>{{ product.compare_at_price | money }}</del>
+      {%- endif -%}
+    </p>
+  {%- else -%}
+    <p class="pawly-card__meta">{{ 'products.product.sold_out' | t }}</p>
+  {%- endif -%}
+
+  {%- if quick_add and product.available -%}
+    <div class="pawly-card__foot">
+      {%- if product.variants.size == 1 -%}
+        {%- comment -%}
+          Single variant: a real form. With JS it goes through /cart/add.js and
+          opens the drawer; with JS off it posts and Shopify redirects to /cart.
+        {%- endcomment -%}
+        <form method="post" action="{{ routes.cart_add_url }}" data-pawly-add>
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <input type="hidden" name="quantity" value="1">
+          <button type="submit" class="btn btn--outline btn--sm btn--block pawly-card__quick-add">
+            {{ 'products.product.quick_add' | t }}
+          </button>
+          <p class="pawly-card__meta" data-add-error hidden></p>
+        </form>
+      {%- else -%}
+        {%- comment -%}
+          Multiple variants: never guess for the customer. Send them to the
+          product page where every option is a real, pickable swatch.
+        {%- endcomment -%}
+        <a
+          href="{{ product.url }}"
+          class="btn btn--outline btn--sm btn--block pawly-card__quick-add"
+        >
+          {{ 'products.product.choose_options' | t }}
+        </a>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+</div>

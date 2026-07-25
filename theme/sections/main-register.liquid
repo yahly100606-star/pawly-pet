@@ -1,0 +1,55 @@
+<div class="pawly-container pawly-section">
+  <div class="narrow">
+    <div class="page-head">
+      <h1>{{ 'customer.register.title' | t }}</h1>
+    </div>
+
+    <div class="card-panel">
+      {%- form 'create_customer' -%}
+        {%- if form.errors -%}
+          <p class="form-status form-status--error" role="alert">{{ form.errors | default_errors }}</p>
+        {%- endif -%}
+
+        <div class="field">
+          <label class="field__label" for="reg-first">{{ 'customer.register.first_name' | t }}</label>
+          <input id="reg-first" class="input" type="text" name="customer[first_name]" autocomplete="given-name">
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="reg-last">{{ 'customer.register.last_name' | t }}</label>
+          <input id="reg-last" class="input" type="text" name="customer[last_name]" autocomplete="family-name">
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="reg-email">{{ 'customer.register.email' | t }}</label>
+          <input id="reg-email" class="input" type="email" name="customer[email]" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="reg-password">{{ 'customer.register.password' | t }}</label>
+          <input
+            id="reg-password"
+            class="input"
+            type="password"
+            name="customer[password]"
+            autocomplete="new-password"
+            required
+          >
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--block">{{ 'customer.register.submit' | t }}</button>
+
+        <p style="margin-top: var(--sp-4); text-align: center">
+          {{ 'customer.register.has_account' | t }}
+          <a href="{{ routes.account_login_url }}">{{ 'customer.register.sign_in' | t }}</a>
+        </p>
+      {%- endform -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "פתיחת חשבון"
+}
+{% endschema %}

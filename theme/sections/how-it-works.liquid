@@ -1,0 +1,115 @@
+{% comment %}
+  Port of the Features (features-1.tsx) component: three cells, each with a
+  decorated icon in a bordered box, a heading and one line of body.
+
+  The React source's Tailwind arbitrary values become plain CSS in pawly.css —
+  the container query and the radial mask-image on the icon grid are both kept,
+  just written as CSS instead of `@container` / `[mask-image:...]` class strings.
+
+  Icons are inline SVG snippets. No emoji, no lucide-react.
+
+  The steps are numbered because they are a real sequence: order → it arrives →
+  send it back if you don't like it. Numbering an unordered list of features is
+  what makes a page look auto-generated.
+{% endcomment %}
+
+<section class="pawly-section how" id="how-{{ section.id }}">
+  <div class="pawly-container">
+    {%- if section.settings.heading != blank -%}
+      <div class="pawly-section__head pawly-section__head--center">
+        <h2>{{ section.settings.heading }}</h2>
+      </div>
+    {%- endif -%}
+
+    <div class="how__grid">
+      {%- for block in section.blocks -%}
+        <div class="how__cell reveal" {{ block.shopify_attributes }}>
+          <span class="how__icon-box">{% render block.settings.icon %}</span>
+          {%- if section.settings.show_numbers -%}
+            <span class="how__step">{{ forloop.index }}</span>
+          {%- endif -%}
+          <h3 class="how__title">{{ block.settings.title }}</h3>
+          <p class="how__body">{{ block.settings.body }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "איך זה עובד",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "כותרת",
+      "default": "איך זה עובד"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_numbers",
+      "label": "מספור השלבים",
+      "default": true,
+      "info": "כבו את המספור אם התוכן אינו רצף שלבים."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "שלב",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "אייקון",
+          "options": [
+            { "value": "icon-box", "label": "חבילה" },
+            { "value": "icon-truck", "label": "משלוח" },
+            { "value": "icon-clock", "label": "שעון" },
+            { "value": "icon-return", "label": "החזרה" },
+            { "value": "icon-shield", "label": "מגן" },
+            { "value": "icon-paw", "label": "כפה" },
+            { "value": "icon-check", "label": "וי" }
+          ],
+          "default": "icon-box"
+        },
+        { "type": "text", "id": "title", "label": "כותרת" },
+        { "type": "textarea", "id": "body", "label": "שורת הסבר" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "איך זה עובד",
+      "blocks": [
+        {
+          "type": "step",
+          "settings": {
+            "icon": "icon-box",
+            "title": "מזמינים",
+            "body": "בוחרים מוצר, משלמים, וזהו. משלוח חינם מעל ₪150."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "icon": "icon-truck",
+            "title": "מגיע תוך 10–16 ימי עסקים",
+            "body": "שולחים לכל הארץ. מעדכנים אתכם במייל כשההזמנה יוצאת."
+          }
+        },
+        {
+          "type": "step",
+          "settings": {
+            "icon": "icon-return",
+            "title": "לא מרוצים? מחזירים",
+            "body": "החזר כספי מלא תוך 90 יום מקבלת ההזמנה."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

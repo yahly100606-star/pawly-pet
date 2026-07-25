@@ -1,0 +1,91 @@
+<div class="pawly-container pawly-section">
+  <div class="narrow">
+    <div class="page-head">
+      <h1>{{ 'customer.login.title' | t }}</h1>
+    </div>
+
+    {%- comment -%} Shopify renders the recovery form when ?recover is present. {%- endcomment -%}
+    <div class="card-panel" id="recover" style="display: none">
+      {%- form 'recover_customer_password' -%}
+        <h2 style="font-size: var(--step-2)">{{ 'customer.recover_password.title' | t }}</h2>
+        <p>{{ 'customer.recover_password.subtext' | t }}</p>
+
+        {%- if form.posted_successfully? -%}
+          <p class="form-status form-status--success" role="status">
+            {{ 'customer.recover_password.success' | t }}
+          </p>
+        {%- endif -%}
+
+        <div class="field">
+          <label class="field__label" for="recover-email">{{ 'customer.login.email' | t }}</label>
+          <input id="recover-email" class="input" type="email" name="email" autocomplete="email" required>
+        </div>
+
+        <button type="submit" class="btn btn--clay">{{ 'customer.recover_password.submit' | t }}</button>
+        <a href="{{ routes.account_login_url }}" class="btn btn--ghost btn--sm">
+          {{ 'customer.recover_password.cancel' | t }}
+        </a>
+      {%- endform -%}
+    </div>
+
+    <div class="card-panel" id="login">
+      {%- form 'customer_login' -%}
+        {%- if form.errors -%}
+          <p class="form-status form-status--error" role="alert">{{ form.errors | default_errors }}</p>
+        {%- endif -%}
+
+        <div class="field">
+          <label class="field__label" for="login-email">{{ 'customer.login.email' | t }}</label>
+          <input id="login-email" class="input" type="email" name="customer[email]" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="login-password">{{ 'customer.login.password' | t }}</label>
+          <input
+            id="login-password"
+            class="input"
+            type="password"
+            name="customer[password]"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--block">{{ 'customer.login.sign_in' | t }}</button>
+
+        <p style="margin-top: var(--sp-4); text-align: center">
+          <a href="{{ routes.account_recover_url }}">{{ 'customer.login.forgot_password' | t }}</a>
+        </p>
+      {%- endform -%}
+    </div>
+
+    {%- if shop.customer_accounts_optional -%}
+      <p style="margin-top: var(--sp-5); text-align: center">
+        {{ 'customer.login.no_account' | t }}
+        <a href="{{ routes.account_register_url }}">{{ 'customer.login.create_account' | t }}</a>
+      </p>
+    {%- endif -%}
+  </div>
+</div>
+
+<script>
+  // Shopify links to /account/login#recover for the reset flow.
+  (function () {
+    function sync() {
+      var recovering = window.location.hash === '#recover';
+      var recover = document.getElementById('recover');
+      var login = document.getElementById('login');
+      if (!recover || !login) return;
+      recover.style.display = recovering ? 'block' : 'none';
+      login.style.display = recovering ? 'none' : 'block';
+    }
+    sync();
+    window.addEventListener('hashchange', sync);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "כניסה"
+}
+{% endschema %}

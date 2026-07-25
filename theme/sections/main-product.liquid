@@ -1,0 +1,877 @@
+{%- liquid
+  comment
+    Product page.
+
+    Fixes the five failures the merchant reported on the previous build:
+
+    1. Variants were unselectable. Every option is now a real radio group —
+       colour options are colour swatches, everything else is a pill. Selecting
+       one live-updates price, compare-at price, availability, SKU, the gallery
+       image, the ?variant= URL and the hidden form input. Unavailable
+       combinations stay clickable but are struck through, so the customer can
+       always see why something is out.
+
+    2. "Buy more save more" is no longer the primary path. One variant, one Add
+       to Cart, at the top. The quantity/bundle module sits BELOW the
+       description and is clearly secondary.
+
+    3. Decorative trust stickers are gone. Where a product's options carry
+       genuinely different prices (product 3's קטן vs גדול), a side-by-side spec
+       comparison renders instead, with a "בחרו" button per column.
+
+    4. The guarantee reads exactly "החזר כספי מלא תוך 90 יום", pulled from the
+       locale file. The one-year-warranty wording the merchant does not stand
+       behind is not used anywhere in this theme — grep for it and you get
+       nothing.
+
+    5. No white block on zoom-out. Nothing here uses 100vw or a fixed width;
+       the page wrapper carries overflow-x: clip.
+  endcomment
+
+  assign current = product.selected_or_first_available_variant
+
+  comment
+    Which option, if any, is worth comparing side by side? The one whose values
+    produce genuinely different prices. If every value costs the same, a
+    comparison table would be decoration — so it isn't rendered.
+  endcomment
+  assign compare_index = -1
+  for opt in product.options_with_values
+    assign idx = forloop.index0
+    assign price_list = ''
+    for value in opt.values
+      for variant in product.variants
+        if variant.options[idx] == value
+          assign price_list = price_list | append: variant.price | append: ','
+          break
+        endif
+      endfor
+    endfor
+    assign distinct = price_list | split: ',' | uniq
+    if distinct.size > 1 and compare_index == -1
+      assign compare_index = idx
+    endif
+  endfor
+
+  comment
+    Upsell — never hardcoded as the only path. The product comes from a section
+    setting, the variant from a theme setting, and the block disappears on the
+    upsell product's own page (so it is absent on product 6) and when it is
+    already in the cart.
+  endcomment
+  assign up_product = all_products[section.settings.upsell_handle]
+  assign up_variant = nil
+  assign up_in_cart = false
+
+  if up_product != blank and up_product.id != product.id
+    for variant in up_product.variants
+      assign vid = variant.id | append: ''
+      if vid == settings.upsell_variant_id
+        assign up_variant = variant
+        break
+      endif
+    endfor
+    unless up_variant
+      assign up_variant = up_product.selected_or_first_available_variant
+    endunless
+
+    if up_variant
+      for line in cart.items
+        if line.variant.id == up_variant.id
+          assign up_in_cart = true
+          break
+        endif
+      endfor
+    endif
+  endif
+-%}
+
+<div class="pawly-container pawly-section" id="product-{{ section.id }}" data-product-root>
+  <div class="product">
+    {%- comment -%}
+      Gallery first in the DOM, so in RTL it lands on the right and the sticky
+      buy box lands on the left. No direction is hardcoded.
+    {%- endcomment -%}
+    <div class="product__gallery">
+      <div class="gallery__main" data-gallery-main>
+        {%- if product.media.size > 0 -%}
+          {%- for media in product.media -%}
+            <div
+              class="gallery__slide{% if forloop.first %} is-active{% endif %}"
+              data-media-id="{{ media.id }}"
+            >
+              <img
+                src="{{ media | image_url: width: 1200 }}"
+                srcset="
+                  {{ media | image_url: width: 600 }} 600w,
+                  {{ media | image_url: width: 900 }} 900w,
+                  {{ media | image_url: width: 1200 }} 1200w,
+                  {{ media | image_url: width: 1600 }} 1600w
+                "
+                sizes="(min-width: 900px) 55vw, 100vw"
+                alt="{{ media.alt | default: product.title | escape }}"
+                width="{{ media.preview_image.width }}"
+                height="{{ media.preview_image.height }}"
+                loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                {% if forloop.first %}fetchpriority="high"{% endif %}
+                decoding="async"
+              >
+            </div>
+          {%- endfor -%}
+        {%- else -%}
+          {%- comment -%}
+            All six products currently have no images. The box keeps its aspect
+            ratio and shows the branded placeholder, so nothing collapses.
+          {%- endcomment -%}
+          {% render 'media-placeholder', label: 'products.product.no_image' | t %}
+        {%- endif -%}
+      </div>
+
+      {%- if product.media.size > 1 -%}
+        <div
+          class="gallery__thumbs"
+          role="tablist"
+          aria-label="{{ 'products.product.gallery_label' | t }}"
+          data-gallery-thumbs
+        >
+          {%- for media in product.media -%}
+            <button
+              type="button"
+              class="gallery__thumb"
+              role="tab"
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+              aria-label="{{ 'products.product.thumbnail' | t: index: forloop.index }}"
+              data-media-id="{{ media.id }}"
+            >
+              <img
+                src="{{ media | image_url: width: 160 }}"
+                alt=""
+                width="78"
+                height="78"
+                loading="lazy"
+              >
+            </button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} ------------------------------------------- buy box {%- endcomment -%}
+    <div class="product__buybox">
+      {%- if product.vendor != blank -%}
+        <p class="pawly-eyebrow">{{ product.vendor }}</p>
+      {%- endif -%}
+
+      <h1 class="product__title">{{ product.title }}</h1>
+
+      <div class="product__price-row">
+        <span class="product__price" data-price>{{ current.price | money }}</span>
+
+        <span
+          class="product__price-compare"
+          data-compare-price
+          {% unless current.compare_at_price > current.price %}hidden{% endunless %}
+        >
+          {{- current.compare_at_price | money -}}
+        </span>
+
+        <span
+          class="product__availability{% unless current.available %} product__availability--out{% endunless %}"
+          data-availability
+        >
+          {% render 'icon-check' %}
+          <span data-availability-text>
+            {%- if current.available -%}
+              {{ 'products.product.in_stock' | t }}
+            {%- else -%}
+              {{ 'products.product.sold_out' | t }}
+            {%- endif -%}
+          </span>
+        </span>
+      </div>
+
+      {%- if product.description != blank -%}
+        <div class="product__short rte">
+          {{ product.description | strip_html | truncatewords: 32 }}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} ---- variant pickers ---- {%- endcomment -%}
+      <form
+        method="post"
+        action="{{ routes.cart_add_url }}"
+        id="product-form-{{ section.id }}"
+        data-pawly-add
+        data-product-form
+      >
+        <input type="hidden" name="id" value="{{ current.id }}" data-variant-id>
+
+        {%- unless product.has_only_default_variant -%}
+          {%- for option in product.options_with_values -%}
+            {%- liquid
+              assign opt_index = forloop.index0
+              assign lower = option.name | downcase
+              assign is_colour = false
+              if lower contains 'צבע' or lower contains 'color' or lower contains 'colour'
+                assign is_colour = true
+              endif
+            -%}
+
+            {%- comment -%}
+              role="group" + aria-labelledby rather than fieldset/legend: a
+              <legend> cannot be laid out reliably as a flex item across
+              browsers, and this needs to sit on one line.
+            {%- endcomment -%}
+            <div
+              class="variant-group"
+              role="group"
+              aria-labelledby="optlabel-{{ section.id }}-{{ opt_index }}"
+              data-option-index="{{ opt_index }}"
+            >
+              <p class="variant-group__label" id="optlabel-{{ section.id }}-{{ opt_index }}">
+                <span>{{ option.name }}</span>
+                <span class="variant-group__value" data-option-value>
+                  {{- option.selected_value -}}
+                </span>
+              </p>
+
+              <div class="variant-options">
+                {%- for value in option.values -%}
+                  {%- liquid
+                    assign input_id = 'opt-' | append: section.id | append: '-' | append: opt_index | append: '-' | append: forloop.index
+                    assign swatch = ''
+                    if is_colour
+                      assign needle = value | downcase | strip
+                      assign pairs = section.settings.colour_map | newline_to_br | split: '<br />'
+                      for pair in pairs
+                        assign bits = pair | strip | split: ':'
+                        if bits.size > 1
+                          assign key = bits[0] | downcase | strip
+                          if key == needle
+                            assign swatch = bits[1] | strip
+                          endif
+                        endif
+                      endfor
+                    endif
+                  -%}
+
+                  <div class="variant-option">
+                    <input
+                      type="radio"
+                      id="{{ input_id }}"
+                      name="option-{{ opt_index }}"
+                      value="{{ value | escape }}"
+                      data-option-input
+                      {% if option.selected_value == value %}checked{% endif %}
+                    >
+                    {%- if is_colour -%}
+                      <label
+                        class="variant-option__swatch"
+                        for="{{ input_id }}"
+                        title="{{ value | escape }}"
+                      >
+                        <span style="--swatch: {{ swatch | default: 'var(--pawly-sand)' }}"></span>
+                        <span class="visually-hidden">{{ value }}</span>
+                      </label>
+                    {%- else -%}
+                      <label class="variant-option__pill" for="{{ input_id }}">{{ value }}</label>
+                    {%- endif -%}
+                  </div>
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endfor -%}
+        {%- endunless -%}
+
+        <p class="product__sku" data-sku {% if current.sku == blank %}hidden{% endif %}>
+          {{ 'products.product.sku' | t }}: <span>{{ current.sku }}</span>
+        </p>
+
+        <div class="product__qty">
+          <label for="qty-{{ section.id }}" class="field__label" style="margin: 0">
+            {{ 'products.product.quantity' | t }}
+          </label>
+          <div class="qty" data-qty>
+            <button
+              type="button"
+              data-qty-step="-1"
+              aria-label="{{ 'products.product.quantity_decrease' | t }}"
+            >&minus;</button>
+            <input
+              id="qty-{{ section.id }}"
+              type="number"
+              name="quantity"
+              value="1"
+              min="1"
+              inputmode="numeric"
+            >
+            <button
+              type="button"
+              data-qty-step="1"
+              aria-label="{{ 'products.product.quantity_increase' | t }}"
+            >+</button>
+          </div>
+        </div>
+
+        {%- comment -%}
+          The single shimmer button on this page. Add to Cart is the primary
+          action and there is exactly one of it.
+        {%- endcomment -%}
+        {% render 'shimmer-button',
+          label: 'products.product.add_to_cart' | t,
+          block: true,
+          disabled: false,
+          attrs: 'data-add-button',
+          id: 'add-' | append: section.id
+        %}
+
+        <p class="form-status form-status--error" data-add-error hidden style="margin-top: var(--sp-3)"></p>
+      </form>
+
+      {%- comment -%} ---- in-cart upsell ---- {%- endcomment -%}
+      {%- if up_variant -%}
+        <div class="upsell" data-upsell data-variant-id="{{ up_variant.id }}" {% if up_in_cart %}hidden{% endif %}>
+          <div class="upsell__media">
+            {%- if up_product.featured_media -%}
+              <img
+                src="{{ up_product.featured_media | image_url: width: 140 }}"
+                alt=""
+                width="62"
+                height="62"
+                loading="lazy"
+              >
+            {%- else -%}
+              {% render 'media-placeholder', label: '' %}
+            {%- endif -%}
+          </div>
+
+          <div class="upsell__text">
+            <span class="upsell__title">
+              {%- if settings.upsell_title != blank -%}
+                {{ settings.upsell_title }}
+              {%- else -%}
+                {{ 'products.upsell.heading' | t }}
+              {%- endif -%}
+            </span>
+            <span class="upsell__price">{{ up_variant.price | money }}</span>
+          </div>
+
+          <form method="post" action="{{ routes.cart_add_url }}" data-pawly-add data-upsell-form>
+            <input type="hidden" name="id" value="{{ up_variant.id }}">
+            <input type="hidden" name="quantity" value="1">
+            <button type="submit" class="btn btn--outline btn--sm">
+              {{ 'products.upsell.add' | t }}
+            </button>
+          </form>
+        </div>
+      {%- endif -%}
+
+      <div class="product__guarantee">
+        {% render 'icon-shield' %}
+        <span>
+          <strong>{{ 'brand.guarantee' | t }}</strong>
+          {{ 'brand.shipping' | t }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} ---------------------------------------- accordion ---------- {%- endcomment -%}
+  <div class="accordion narrow" data-accordion-exclusive style="max-width: 820px">
+    <details class="accordion__item" open>
+      <summary>{{ 'products.accordion.description' | t }}</summary>
+      <div class="accordion__panel rte">
+        {%- if product.description != blank -%}
+          {{ product.description }}
+        {%- else -%}
+          <p>[דרוש מידע: תיאור מוצר]</p>
+        {%- endif -%}
+      </div>
+    </details>
+
+    <details class="accordion__item">
+      <summary>{{ 'products.accordion.in_the_box' | t }}</summary>
+      <div class="accordion__panel rte">
+        {%- if section.settings.in_the_box != blank -%}
+          {{ section.settings.in_the_box }}
+        {%- else -%}
+          <p>{{ 'products.accordion.in_the_box_empty' | t }}</p>
+        {%- endif -%}
+      </div>
+    </details>
+
+    <details class="accordion__item">
+      <summary>{{ 'products.accordion.shipping' | t }}</summary>
+      <div class="accordion__panel rte">
+        <p>{{ 'products.accordion.shipping_body' | t }}</p>
+      </div>
+    </details>
+
+    {%- if section.settings.faq != blank -%}
+      <details class="accordion__item">
+        <summary>{{ 'products.accordion.faq' | t }}</summary>
+        <div class="accordion__panel rte">{{ section.settings.faq }}</div>
+      </details>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%}
+    ---- comparison table ----
+    Only rendered when the option values genuinely differ in price. It replaces
+    the decorative trust stickers the merchant asked to have removed.
+  {%- endcomment -%}
+  {%- if compare_index >= 0 and section.settings.show_compare -%}
+    {%- assign compare_option = product.options_with_values[compare_index] -%}
+    <div class="pawly-section--tight" style="max-width: 820px; margin-inline: auto">
+      <h2 style="font-size: var(--step-2)">{{ 'products.compare.heading' | t }}</h2>
+
+      <div class="compare">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">{{ compare_option.name }}</th>
+              {%- for value in compare_option.values -%}
+                <th scope="col">{{ value }}</th>
+              {%- endfor -%}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">{{ 'products.compare.price' | t }}</th>
+              {%- for value in compare_option.values -%}
+                {%- assign row_variant = blank -%}
+                {%- for variant in product.variants -%}
+                  {%- if variant.options[compare_index] == value -%}
+                    {%- assign row_variant = variant -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endfor -%}
+                <td class="compare__price">{{ row_variant.price | money }}</td>
+              {%- endfor -%}
+            </tr>
+
+            <tr>
+              <th scope="row">{{ 'products.compare.availability' | t }}</th>
+              {%- for value in compare_option.values -%}
+                {%- assign any_available = false -%}
+                {%- for variant in product.variants -%}
+                  {%- if variant.options[compare_index] == value and variant.available -%}
+                    {%- assign any_available = true -%}
+                    {%- break -%}
+                  {%- endif -%}
+                {%- endfor -%}
+                <td>
+                  {%- if any_available -%}
+                    {{ 'products.product.in_stock' | t }}
+                  {%- else -%}
+                    {{ 'products.product.sold_out' | t }}
+                  {%- endif -%}
+                </td>
+              {%- endfor -%}
+            </tr>
+
+            <tr>
+              <th scope="row">{{ 'products.compare.option' | t }}</th>
+              {%- for value in compare_option.values -%}
+                <td>
+                  <button
+                    type="button"
+                    class="btn btn--outline btn--sm"
+                    data-compare-pick
+                    data-option-index="{{ compare_index }}"
+                    data-value="{{ value | escape }}"
+                  >
+                    {{ 'products.compare.choose' | t }}
+                  </button>
+                </td>
+              {%- endfor -%}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%}
+    ---- quantity bundle ----
+    Present, but below the description and visibly secondary. It is never the
+    primary path to a purchase.
+  {%- endcomment -%}
+  {%- if section.settings.show_bundle -%}
+    <div class="pawly-section--tight" style="max-width: 820px; margin-inline: auto">
+      <div class="bundle">
+        <h2 style="font-size: var(--step-2); margin-bottom: var(--sp-1)">
+          {{ 'products.bundle.heading' | t }}
+        </h2>
+        <p class="pawly-card__meta">{{ 'products.bundle.note' | t }}</p>
+
+        <div class="bundle__options">
+          {%- for n in (1..3) -%}
+            <button
+              type="button"
+              class="bundle__option"
+              data-bundle-qty="{{ n }}"
+              aria-controls="qty-{{ section.id }}"
+            >
+              <strong>{{ n }}</strong><br>
+              <span class="pawly-card__meta">
+                {{- current.price | times: n | money -}}
+              </span>
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- comment -%}
+    Variant data for the picker.
+
+    Prices are pre-formatted here with the `money` filter rather than shipped as
+    integers and formatted in JavaScript. Intl.NumberFormat('he-IL') renders ILS
+    as "109.90 ₪" while Shopify's money filter renders "₪109.90" — formatting in
+    JS meant the price changed shape the moment a customer picked a variant.
+    Now every price string on this page comes from the same place.
+  {%- endcomment -%}
+  <script type="application/json" data-variant-data>
+    [
+      {%- for v in product.variants -%}
+        {
+          "id": {{ v.id | json }},
+          "options": {{ v.options | json }},
+          "available": {{ v.available | json }},
+          "sku": {{ v.sku | json }},
+          "price_money": {{ v.price | money | json }},
+          "compare_money": {% if v.compare_at_price > v.price %}{{ v.compare_at_price | money | json }}{% else %}null{% endif %},
+          "media_id": {% if v.featured_media %}{{ v.featured_media.id | json }}{% else %}null{% endif %}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  </script>
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('product-{{ section.id }}');
+    if (!root) return;
+
+    var dataEl = root.querySelector('[data-variant-data]');
+    var variants = [];
+    try {
+      variants = JSON.parse(dataEl.textContent);
+    } catch (e) {
+      return; // markup already shows the first available variant
+    }
+
+    var form = root.querySelector('[data-product-form]');
+    var idInput = root.querySelector('[data-variant-id]');
+    var priceEl = root.querySelector('[data-price]');
+    var compareEl = root.querySelector('[data-compare-price]');
+    var availEl = root.querySelector('[data-availability]');
+    var availTextEl = root.querySelector('[data-availability-text]');
+    var skuEl = root.querySelector('[data-sku]');
+    var addBtn = root.querySelector('[data-add-button]');
+    var slides = root.querySelectorAll('.gallery__slide');
+    var thumbs = root.querySelectorAll('.gallery__thumb');
+    var groups = root.querySelectorAll('[data-option-index]');
+
+    var strings = (window.PawlyConfig && window.PawlyConfig.strings) || {};
+
+    /* ------------------------------------------------------------ gallery */
+
+    function showMedia(id) {
+      if (!id) return;
+      slides.forEach(function (s) {
+        s.classList.toggle('is-active', s.getAttribute('data-media-id') === String(id));
+      });
+      thumbs.forEach(function (t) {
+        t.setAttribute(
+          'aria-selected',
+          t.getAttribute('data-media-id') === String(id) ? 'true' : 'false'
+        );
+      });
+    }
+
+    thumbs.forEach(function (thumb, i) {
+      thumb.addEventListener('click', function () {
+        showMedia(thumb.getAttribute('data-media-id'));
+      });
+
+      // Arrow keys walk the thumbnail strip, mirrored for RTL.
+      thumb.addEventListener('keydown', function (e) {
+        var rtl = (document.dir || document.documentElement.dir) === 'rtl';
+        var delta = 0;
+        if (e.key === 'ArrowRight') delta = rtl ? -1 : 1;
+        else if (e.key === 'ArrowLeft') delta = rtl ? 1 : -1;
+        else return;
+        e.preventDefault();
+        var next = thumbs[i + delta];
+        if (!next) return;
+        next.focus();
+        showMedia(next.getAttribute('data-media-id'));
+      });
+    });
+
+    /* ------------------------------------------------------------ variants */
+
+    function selectedValues() {
+      return Array.prototype.map.call(groups, function (group) {
+        var checked = group.querySelector('[data-option-input]:checked');
+        return checked ? checked.value : null;
+      });
+    }
+
+    function findVariant(values) {
+      return (
+        variants.filter(function (v) {
+          return values.every(function (val, i) {
+            return val === null || v.options[i] === val;
+          });
+        })[0] || null
+      );
+    }
+
+    /** Mark values that cannot be reached given the other current selections.
+     *  They stay clickable — a struck-through option the customer can inspect
+     *  beats an option that silently isn't there. */
+    function markAvailability(values) {
+      groups.forEach(function (group, gi) {
+        group.querySelectorAll('[data-option-input]').forEach(function (input) {
+          var probe = values.slice();
+          probe[gi] = input.value;
+          var reachable = variants.some(function (v) {
+            return (
+              v.available &&
+              probe.every(function (val, i) {
+                return val === null || v.options[i] === val;
+              })
+            );
+          });
+          input.setAttribute('data-unavailable', reachable ? 'false' : 'true');
+        });
+      });
+    }
+
+    /** Force the radio groups to match a given variant's options. */
+    function applyVariantToInputs(variant) {
+      groups.forEach(function (group, gi) {
+        group.querySelectorAll('[data-option-input]').forEach(function (input) {
+          input.checked = input.value === variant.options[gi];
+        });
+      });
+    }
+
+    /**
+     * @param changedIndex index of the option group the customer just touched,
+     *   or null. Used to resolve impossible combinations in their favour.
+     */
+    function update(changedIndex) {
+      var values = selectedValues();
+      var variant = findVariant(values);
+
+      // The chosen combination does not exist — e.g. picking גדול while ורד is
+      // selected, when ורד only comes in קטן. Rather than leaving the customer
+      // on a dead end, honour the option they just clicked and move the others
+      // to the nearest variant that actually exists. Preferring an available
+      // one, but falling back to a sold-out variant so the page still shows
+      // them a real product rather than an error.
+      if (!variant && changedIndex !== null && changedIndex !== undefined) {
+        var wanted = values[changedIndex];
+        var matches = variants.filter(function (v) {
+          return v.options[changedIndex] === wanted;
+        });
+        var best =
+          matches.filter(function (v) {
+            return v.available;
+          })[0] || matches[0];
+
+        if (best) {
+          applyVariantToInputs(best);
+          values = selectedValues();
+          variant = best;
+        }
+      }
+
+      markAvailability(values);
+
+      groups.forEach(function (group) {
+        var checked = group.querySelector('[data-option-input]:checked');
+        var label = group.querySelector('[data-option-value]');
+        if (label && checked) label.textContent = checked.value;
+      });
+
+      if (!variant) {
+        if (addBtn) {
+          addBtn.disabled = true;
+          var span = addBtn.querySelector('span:not(.shimmer-btn__spark)');
+          if (span) span.textContent = strings.unavailable || '';
+        }
+        if (availTextEl) availTextEl.textContent = strings.unavailable || '';
+        if (availEl) availEl.classList.add('product__availability--out');
+        return;
+      }
+
+      if (idInput) idInput.value = variant.id;
+
+      if (priceEl) priceEl.textContent = variant.price_money;
+
+      if (compareEl) {
+        if (variant.compare_money) {
+          compareEl.textContent = variant.compare_money;
+          compareEl.hidden = false;
+        } else {
+          compareEl.hidden = true;
+        }
+      }
+
+      if (availTextEl) {
+        availTextEl.textContent = variant.available
+          ? {{ 'products.product.in_stock' | t | json }}
+          : strings.soldOut || '';
+      }
+      if (availEl) availEl.classList.toggle('product__availability--out', !variant.available);
+
+      if (skuEl) {
+        var skuSpan = skuEl.querySelector('span');
+        if (skuSpan) skuSpan.textContent = variant.sku || '';
+        skuEl.hidden = !variant.sku;
+      }
+
+      if (addBtn) {
+        addBtn.disabled = !variant.available;
+        var btnSpan = addBtn.querySelector('span:not(.shimmer-btn__spark)');
+        if (btnSpan) {
+          btnSpan.textContent = variant.available
+            ? strings.addToCart || btnSpan.textContent
+            : strings.soldOut || '';
+        }
+      }
+
+      if (variant.media_id) showMedia(variant.media_id);
+
+      // Keep the URL shareable without adding a history entry per click.
+      if (window.history && window.history.replaceState) {
+        var url = new URL(window.location.href);
+        url.searchParams.set('variant', variant.id);
+        window.history.replaceState({}, '', url.toString());
+      }
+    }
+
+    root.addEventListener('change', function (e) {
+      if (!e.target.matches('[data-option-input]')) return;
+      var group = e.target.closest('[data-option-index]');
+      update(group ? parseInt(group.getAttribute('data-option-index'), 10) : null);
+    });
+
+    // The comparison table's "בחרו" buttons drive the same radio group, so
+    // there is exactly one source of truth for the selected variant.
+    root.addEventListener('click', function (e) {
+      var pick = e.target.closest('[data-compare-pick]');
+      if (pick) {
+        var gi = pick.getAttribute('data-option-index');
+        var want = pick.getAttribute('data-value');
+        var group = root.querySelector('[data-option-index="' + gi + '"]');
+        if (group) {
+          group.querySelectorAll('[data-option-input]').forEach(function (input) {
+            if (input.value === want) input.checked = true;
+          });
+          update(parseInt(gi, 10));
+          form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      var bundle = e.target.closest('[data-bundle-qty]');
+      if (bundle) {
+        var qtyInput = root.querySelector('input[name="quantity"]');
+        if (qtyInput) {
+          qtyInput.value = bundle.getAttribute('data-bundle-qty');
+          qtyInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+
+    update(null);
+
+    /* -------------------------------------------------------------- upsell */
+
+    var upsell = root.querySelector('[data-upsell]');
+    if (upsell) {
+      var upsellId = String(upsell.getAttribute('data-variant-id'));
+
+      document.addEventListener('pawly:cart:updated', function (e) {
+        var cart = e.detail && e.detail.cart;
+        if (!cart) return;
+        var present = (cart.items || []).some(function (item) {
+          return String(item.variant_id) === upsellId;
+        });
+        upsell.hidden = present;
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "מוצר",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "צבעים"
+    },
+    {
+      "type": "textarea",
+      "id": "colour_map",
+      "label": "מיפוי שמות צבע לקוד צבע",
+      "default": "סגול: #7E57C2\nלבן פורצלן: #F4F1EA\nחום חלבי: #C8A882\nירוק: #4CAF7D\nאפור: #9E9E9E\nורד: #E8A0A8\nכחול: #4FA8D8",
+      "info": "שורה לכל צבע, בפורמט «שם הווריאנט: קוד צבע». כדאי לעדכן לפי צילומי המוצר האמיתיים. צבע שלא מופיע כאן מקבל עיגול בצבע חול."
+    },
+    {
+      "type": "header",
+      "content": "תוכן"
+    },
+    {
+      "type": "richtext",
+      "id": "in_the_box",
+      "label": "מה בקופסה",
+      "info": "השאירו ריק ותוצג הודעת [דרוש מידע] במקום המצאה."
+    },
+    {
+      "type": "richtext",
+      "id": "faq",
+      "label": "שאלות למוצר הזה"
+    },
+    {
+      "type": "header",
+      "content": "מודולים"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_compare",
+      "label": "טבלת השוואה בין גרסאות",
+      "default": true,
+      "info": "מוצגת רק כשלגרסאות יש מחירים שונים באמת. אחרת היא קישוט."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_bundle",
+      "label": "מודול כמות",
+      "default": false,
+      "info": "משני בלבד, מתחת לתיאור. הפעולה הראשית היא גרסה אחת והוספה אחת לסל."
+    },
+    {
+      "type": "header",
+      "content": "מכירה נלווית"
+    },
+    {
+      "type": "text",
+      "id": "upsell_handle",
+      "label": "כתובת המוצר הנלווה (handle)",
+      "default": "משחת-לחות-בנוסחה-חדשנית-מבית-pawly-לכלב",
+      "info": "המכירה הנלווית נעלמת אוטומטית בעמוד של המוצר עצמו וכשהוא כבר בסל. מזהה הווריאנט נמצא בהגדרות הערכה."
+    }
+  ]
+}
+{% endschema %}

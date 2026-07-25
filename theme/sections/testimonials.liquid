@@ -1,0 +1,162 @@
+{% comment %}
+  Port of TestimonialsColumn: three columns translating -50% on an infinite
+  linear loop at different durations, content duplicated twice so the seam is
+  invisible.
+
+  Pure CSS @keyframes + transform: translateY — cheaper than JS and it survives
+  GSAP failing to load entirely. Paused on hover and on :focus-within so a
+  keyboard user can actually read a card.
+
+  EVERY card is marked [דוגמה — להחלפה] by default. Publishing invented reviews
+  breaks חוק הגנת הצרכן. Each card is a schema block, so real reviews slot
+  straight in — untick "דוגמה" on a block once its text is a real review.
+{% endcomment %}
+
+{%- assign durations = '15s,19s,17s' | split: ',' -%}
+
+<section class="pawly-section testimonials" id="tst-{{ section.id }}">
+  <div class="testimonials__bg" aria-hidden="true">
+    {%- if section.settings.background != blank -%}
+      <img
+        src="{{ section.settings.background | image_url: width: 2000 }}"
+        srcset="
+          {{ section.settings.background | image_url: width: 900 }} 900w,
+          {{ section.settings.background | image_url: width: 2000 }} 2000w
+        "
+        sizes="100vw"
+        alt=""
+        width="{{ section.settings.background.width }}"
+        height="{{ section.settings.background.height }}"
+        loading="lazy"
+        decoding="async"
+      >
+    {%- endif -%}
+  </div>
+
+  <div class="pawly-container testimonials__inner">
+    <div class="pawly-section__head pawly-section__head--center">
+      <h2>{{ section.settings.heading }}</h2>
+    </div>
+
+    {%- if section.settings.show_notice -%}
+      <p class="testimonials__notice">{{ 'sections.testimonials.placeholder_notice' | t }}</p>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="testimonials__cols">
+        {%- for col in (0..2) -%}
+          <div
+            class="testimonials__col"
+            style="--marquee-duration: {{ durations[col] }}"
+          >
+            {%- comment -%}
+              The set is rendered twice. The second copy is aria-hidden so the
+              same review is not announced to a screen reader twice.
+            {%- endcomment -%}
+            {%- for pass in (1..2) -%}
+              {%- for block in section.blocks -%}
+                {%- assign bucket = forloop.index0 | modulo: 3 -%}
+                {%- if bucket != col %}{% continue %}{% endif -%}
+
+                <figure
+                  class="testimonial"
+                  {% if pass == 2 %}aria-hidden="true"{% endif %}
+                  {% if pass == 1 %}{{ block.shopify_attributes }}{% endif %}
+                >
+                  <blockquote class="testimonial__text">
+                    {%- if block.settings.is_placeholder -%}
+                      <span class="testimonial__tag">
+                        {{- 'sections.testimonials.placeholder_prefix' | t -}}
+                      </span>
+                    {%- endif -%}
+                    {{ block.settings.text }}
+                  </blockquote>
+
+                  <figcaption class="testimonial__who">
+                    {%- if block.settings.avatar != blank -%}
+                      <img
+                        class="testimonial__avatar"
+                        src="{{ block.settings.avatar | image_url: width: 96 }}"
+                        alt=""
+                        width="42"
+                        height="42"
+                        loading="lazy"
+                      >
+                    {%- else -%}
+                      <span class="testimonial__avatar" aria-hidden="true"></span>
+                    {%- endif -%}
+                    <span>
+                      <span class="testimonial__name">{{ block.settings.name }}</span>
+                      {%- if block.settings.pet != blank -%}
+                        <br><span class="testimonial__pet">{{ block.settings.pet }}</span>
+                      {%- endif -%}
+                    </span>
+                  </figcaption>
+                </figure>
+              {%- endfor -%}
+            {%- endfor -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "ביקורות",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "כותרת",
+      "default": "מה אומרים עלינו"
+    },
+    {
+      "type": "image_picker",
+      "id": "background",
+      "label": "תמונת רקע",
+      "info": "כהה וחמה. מעליה נמתח כיסוי כדי שהטקסט הבהיר יישאר קריא."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_notice",
+      "label": "הצגת ההודעה שאלו דוגמאות",
+      "default": true,
+      "info": "השאירו דלוק עד שיהיו ביקורות אמיתיות. פרסום ביקורות שלא נכתבו על ידי לקוחות אסור לפי חוק הגנת הצרכן."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "ביקורת",
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "is_placeholder",
+          "label": "דוגמה (לא ביקורת אמיתית)",
+          "default": true,
+          "info": "כשמסומן מוצגת התווית [דוגמה — להחלפה]. כבו רק כשהטקסט הוא ביקורת אמיתית של לקוח."
+        },
+        { "type": "textarea", "id": "text", "label": "הביקורת" },
+        { "type": "text", "id": "name", "label": "שם" },
+        { "type": "text", "id": "pet", "label": "שם החיה" },
+        { "type": "image_picker", "id": "avatar", "label": "תמונה" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "ביקורות",
+      "blocks": [
+        { "type": "review", "settings": { "text": "[דרוש מידע: ביקורת אמיתית]", "name": "[שם]", "pet": "[שם החיה]" } },
+        { "type": "review", "settings": { "text": "[דרוש מידע: ביקורת אמיתית]", "name": "[שם]", "pet": "[שם החיה]" } },
+        { "type": "review", "settings": { "text": "[דרוש מידע: ביקורת אמיתית]", "name": "[שם]", "pet": "[שם החיה]" } },
+        { "type": "review", "settings": { "text": "[דרוש מידע: ביקורת אמיתית]", "name": "[שם]", "pet": "[שם החיה]" } },
+        { "type": "review", "settings": { "text": "[דרוש מידע: ביקורת אמיתית]", "name": "[שם]", "pet": "[שם החיה]" } },
+        { "type": "review", "settings": { "text": "[דרוש מידע: ביקורת אמיתית]", "name": "[שם]", "pet": "[שם החיה]" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

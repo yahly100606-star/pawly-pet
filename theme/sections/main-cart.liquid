@@ -1,0 +1,210 @@
+{% comment %}
+  The /cart page. This is the no-JS fallback for the drawer and it is a real
+  page in its own right — quantity changes and removals are a plain form POST,
+  so everything works with JavaScript disabled. pawly.js layers AJAX on top
+  when it can.
+{% endcomment %}
+
+{%- liquid
+  assign threshold = settings.cart_free_shipping_threshold | times: 100
+  assign remaining = threshold | minus: cart.total_price
+  assign remaining_money = remaining | money
+  assign progress = 0
+  if threshold > 0
+    assign progress = cart.total_price | times: 100 | divided_by: threshold
+    if progress > 100
+      assign progress = 100
+    endif
+  endif
+-%}
+
+<div class="pawly-container pawly-section" data-cart-page>
+  <div class="page-head">
+    <h1>{{ 'cart.general.title' | t }}</h1>
+  </div>
+
+  {%- if cart.item_count == 0 -%}
+    <div class="empty-state">
+      <h2>{{ 'cart.general.empty' | t }}</h2>
+      <p>{{ 'cart.general.empty_body' | t }}</p>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn--clay btn--lg">
+        {{ 'cart.general.continue_shopping' | t }}
+      </a>
+    </div>
+  {%- else -%}
+    <form action="{{ routes.cart_url }}" method="post" novalidate>
+      <div class="cart-page__grid">
+        <div>
+          <table class="cart-table">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'cart.general.product' | t }}</th>
+                <th scope="col">{{ 'cart.general.quantity' | t }}</th>
+                <th scope="col">{{ 'cart.general.total' | t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {%- for line in cart.items -%}
+                <tr>
+                  <td>
+                    <div class="cart-line" style="border: 0; padding: 0">
+                      <div class="cart-line__media">
+                        {%- if line.image -%}
+                          <img
+                            src="{{ line.image | image_url: width: 160 }}"
+                            alt="{{ line.image.alt | default: line.product.title | escape }}"
+                            width="80"
+                            height="80"
+                            loading="lazy"
+                          >
+                        {%- else -%}
+                          {% render 'media-placeholder', label: '' %}
+                        {%- endif -%}
+                      </div>
+                      <div>
+                        <a href="{{ line.url }}" class="cart-line__title">{{ line.product.title }}</a>
+                        {%- unless line.variant.title contains 'Default' -%}
+                          <span class="cart-line__variant">{{ line.variant.title }}</span>
+                        {%- endunless -%}
+                        <span class="cart-line__variant">{{ line.final_price | money }}</span>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="qty" data-qty>
+                      <button
+                        type="button"
+                        data-qty-step="-1"
+                        aria-label="{{ 'products.product.quantity_decrease' | t }}"
+                      >&minus;</button>
+                      <input
+                        type="number"
+                        name="updates[]"
+                        value="{{ line.quantity }}"
+                        min="0"
+                        inputmode="numeric"
+                        data-cart-qty
+                        data-key="{{ line.key }}"
+                        aria-label="{{ 'cart.general.quantity' | t }}"
+                      >
+                      <button
+                        type="button"
+                        data-qty-step="1"
+                        aria-label="{{ 'products.product.quantity_increase' | t }}"
+                      >+</button>
+                    </div>
+
+                    {%- comment -%}
+                      A real link, so removal works without JavaScript.
+                    {%- endcomment -%}
+                    <a
+                      href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0"
+                      class="cart-line__remove"
+                      style="display: inline-block; margin-top: var(--sp-2)"
+                    >
+                      {{ 'cart.general.remove' | t }}
+                    </a>
+                  </td>
+
+                  <td class="cart-line__price">{{ line.final_line_price | money }}</td>
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+
+          <noscript>
+            <p style="margin-top: var(--sp-4)">
+              <button type="submit" name="update" class="btn btn--outline">
+                {{ 'cart.general.update' | t }}
+              </button>
+            </p>
+          </noscript>
+
+          {%- if section.settings.show_note -%}
+            <div class="field" style="margin-top: var(--sp-6)">
+              <label class="field__label" for="cart-note">{{ 'cart.general.note' | t }}</label>
+              <textarea
+                id="cart-note"
+                name="note"
+                class="textarea"
+                placeholder="{{ 'cart.general.note_placeholder' | t }}"
+              >{{ cart.note }}</textarea>
+            </div>
+          {%- endif -%}
+        </div>
+
+        <aside class="cart-page__summary">
+          {%- if settings.cart_free_shipping_bar and threshold > 0 -%}
+            <div class="free-ship">
+              <p class="free-ship__text">
+                {%- if remaining > 0 -%}
+                  {{ 'cart.general.free_shipping_progress' | t: amount: remaining_money }}
+                {%- else -%}
+                  {{ 'cart.general.free_shipping_reached' | t }}
+                {%- endif -%}
+              </p>
+              <div
+                class="free-ship__track"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="{{ progress }}"
+              >
+                <div class="free-ship__fill" style="width: {{ progress }}%"></div>
+              </div>
+            </div>
+          {%- endif -%}
+
+          <div class="cart-totals">
+            <span>{{ 'cart.general.subtotal' | t }}</span>
+            <span>{{ cart.total_price | money }}</span>
+          </div>
+
+          {%- if cart.cart_level_discount_applications.size > 0 -%}
+            {%- for discount in cart.cart_level_discount_applications -%}
+              <div class="cart-totals" style="font-size: var(--step-0)">
+                <span>{{ discount.title }}</span>
+                <span>&minus;{{ discount.total_allocated_amount | money }}</span>
+              </div>
+            {%- endfor -%}
+          {%- endif -%}
+
+          <p class="cart-note">{{ 'cart.general.shipping_note' | t }}</p>
+
+          <button type="submit" name="checkout" class="btn btn--primary btn--block btn--lg">
+            {{ 'cart.general.checkout' | t }}
+          </button>
+
+          <p style="margin: var(--sp-4) 0 0; text-align: center">
+            <a href="{{ routes.all_products_collection_url }}" class="btn btn--ghost btn--sm">
+              {{ 'cart.general.continue_shopping' | t }}
+            </a>
+          </p>
+
+          <div class="product__guarantee" style="margin-top: var(--sp-5)">
+            {% render 'icon-shield' %}
+            <span>
+              <strong>{{ 'brand.guarantee' | t }}</strong>
+              {{ 'brand.shipping' | t }}
+            </span>
+          </div>
+        </aside>
+      </div>
+    </form>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "סל",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_note",
+      "label": "שדה הערה להזמנה",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

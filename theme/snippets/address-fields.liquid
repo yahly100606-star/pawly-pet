@@ -1,0 +1,195 @@
+{% comment %}
+  Shared address form fields for the customer addresses page.
+  Uses Shopify's country/province selects so the province list stays in sync.
+{% endcomment %}
+
+<div class="field">
+  <label class="field__label" for="{{ form.id }}-first">
+    {{ 'customer.addresses.first_name' | t }}
+  </label>
+  <input
+    id="{{ form.id }}-first"
+    class="input"
+    type="text"
+    name="address[first_name]"
+    value="{{ form.first_name }}"
+    autocomplete="given-name"
+  >
+</div>
+
+<div class="field">
+  <label class="field__label" for="{{ form.id }}-last">
+    {{ 'customer.addresses.last_name' | t }}
+  </label>
+  <input
+    id="{{ form.id }}-last"
+    class="input"
+    type="text"
+    name="address[last_name]"
+    value="{{ form.last_name }}"
+    autocomplete="family-name"
+  >
+</div>
+
+<div class="field">
+  <label class="field__label" for="{{ form.id }}-company">
+    {{ 'customer.addresses.company' | t }}
+  </label>
+  <input
+    id="{{ form.id }}-company"
+    class="input"
+    type="text"
+    name="address[company]"
+    value="{{ form.company }}"
+    autocomplete="organization"
+  >
+</div>
+
+<div class="field">
+  <label class="field__label" for="{{ form.id }}-address1">
+    {{ 'customer.addresses.address1' | t }}
+  </label>
+  <input
+    id="{{ form.id }}-address1"
+    class="input"
+    type="text"
+    name="address[address1]"
+    value="{{ form.address1 }}"
+    autocomplete="address-line1"
+  >
+</div>
+
+<div class="field">
+  <label class="field__label" for="{{ form.id }}-address2">
+    {{ 'customer.addresses.address2' | t }}
+  </label>
+  <input
+    id="{{ form.id }}-address2"
+    class="input"
+    type="text"
+    name="address[address2]"
+    value="{{ form.address2 }}"
+    autocomplete="address-line2"
+  >
+</div>
+
+<div class="field">
+  <label class="field__label" for="{{ form.id }}-city">
+    {{ 'customer.addresses.city' | t }}
+  </label>
+  <input
+    id="{{ form.id }}-city"
+    class="input"
+    type="text"
+    name="address[city]"
+    value="{{ form.city }}"
+    autocomplete="address-level2"
+  >
+</div>
+
+<div class="field">
+  <label class="field__label" for="{{ form.id }}-country">
+    {{ 'customer.addresses.country' | t }}
+  </label>
+  <select
+    id="{{ form.id }}-country"
+    class="select"
+    name="address[country]"
+    data-default="{{ form.country }}"
+    autocomplete="country"
+  >
+    {{ country_option_tags }}
+  </select>
+</div>
+
+<div class="field" id="{{ form.id }}-province-wrap">
+  <label class="field__label" for="{{ form.id }}-province">
+    {{ 'customer.addresses.province' | t }}
+  </label>
+  <select
+    id="{{ form.id }}-province"
+    class="select"
+    name="address[province]"
+    data-default="{{ form.province }}"
+  ></select>
+</div>
+
+<div class="field">
+  <label class="field__label" for="{{ form.id }}-zip">
+    {{ 'customer.addresses.zip' | t }}
+  </label>
+  <input
+    id="{{ form.id }}-zip"
+    class="input"
+    type="text"
+    name="address[zip]"
+    value="{{ form.zip }}"
+    autocomplete="postal-code"
+  >
+</div>
+
+<div class="field">
+  <label class="field__label" for="{{ form.id }}-phone">
+    {{ 'customer.addresses.phone' | t }}
+  </label>
+  <input
+    id="{{ form.id }}-phone"
+    class="input"
+    type="tel"
+    name="address[phone]"
+    value="{{ form.phone }}"
+    autocomplete="tel"
+    dir="ltr"
+  >
+</div>
+
+<label class="field" style="display: flex; gap: var(--sp-2); align-items: center">
+  <input type="checkbox" name="address[default]" value="1" {% if form.default %}checked{% endif %}>
+  <span>{{ 'customer.addresses.set_default' | t }}</span>
+</label>
+
+<script>
+  {%- comment -%}
+    Province list driven by the country select, without Shopify's legacy
+    country_option_tags JS helper. Countries with no provinces hide the field
+    entirely rather than showing an empty dropdown.
+  {%- endcomment -%}
+  (function () {
+    var country = document.getElementById('{{ form.id }}-country');
+    var province = document.getElementById('{{ form.id }}-province');
+    var wrap = document.getElementById('{{ form.id }}-province-wrap');
+    if (!country || !province || !wrap) return;
+
+    function fill() {
+      var option = country.options[country.selectedIndex];
+      var raw = option ? option.getAttribute('data-provinces') : null;
+      var list = [];
+      try {
+        list = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        list = [];
+      }
+
+      province.innerHTML = '';
+      if (!list.length) {
+        wrap.hidden = true;
+        return;
+      }
+
+      wrap.hidden = false;
+      var want = province.getAttribute('data-default');
+      list.forEach(function (pair) {
+        var opt = document.createElement('option');
+        opt.value = pair[0];
+        opt.textContent = pair[1];
+        if (pair[0] === want) opt.selected = true;
+        province.appendChild(opt);
+      });
+    }
+
+    var defaultCountry = country.getAttribute('data-default');
+    if (defaultCountry) country.value = defaultCountry;
+    fill();
+    country.addEventListener('change', fill);
+  })();
+</script>

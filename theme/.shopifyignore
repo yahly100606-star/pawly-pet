@@ -1,0 +1,19 @@
+# Anti-loss protocol — see CLAUDE.md §1, Cause 3.
+#
+# The Theme Editor rewrites these files server-side every time the merchant
+# customises anything. Pushing our local copies over them destroys their work.
+# They are pushed ONCE, on the very first deploy, and never again.
+#
+# FIRST DEPLOY ONLY: rename this file to .shopifyignore.off, push, rename back.
+#   mv .shopifyignore .shopifyignore.off
+#   shopify theme push --store getpawly.myshopify.com --theme <UNPUBLISHED_ID>
+#   mv .shopifyignore.off .shopifyignore
+#
+# Every deploy after that: leave this file exactly as it is.
+
+config/settings_data.json
+templates/*.json
+
+# Never ship editor noise
+.DS_Store
+*.map

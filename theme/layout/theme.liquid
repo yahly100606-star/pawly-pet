@@ -1,0 +1,151 @@
+<!doctype html>
+<html
+  lang="{{ request.locale.iso_code }}"
+  dir="rtl"
+  class="no-js{% if settings.type_display_font == 'body' %} type-body-headings{% endif %}"
+>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="{{ settings.color_cream }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 96 }}">
+      <link rel="apple-touch-icon" href="{{ settings.favicon | image_url: width: 180 }}">
+    {%- endif -%}
+
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; {{ 'general.meta.tags' | t: tags: current_tags | join: ', ' }}{% endif -%}
+      {%- if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    {% comment %} Open Graph — the share image is a theme setting, never hardcoded {% endcomment %}
+    <meta property="og:site_name" content="{{ shop.name }}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    <meta property="og:title" content="{{ page_title | escape }}">
+    <meta property="og:type" content="{% if request.page_type == 'product' %}product{% else %}website{% endif %}">
+    <meta property="og:locale" content="he_IL">
+    {%- if page_description -%}
+      <meta property="og:description" content="{{ page_description | escape }}">
+    {%- endif -%}
+    {%- liquid
+      assign og_image = settings.social_share_image
+      if request.page_type == 'product' and product.featured_media
+        assign og_image = product.featured_media.preview_image
+      endif
+    -%}
+    {%- if og_image -%}
+      <meta property="og:image" content="http:{{ og_image | image_url: width: 1200 }}">
+      <meta property="og:image:width" content="1200">
+      <meta property="og:image:height" content="630">
+      <meta name="twitter:card" content="summary_large_image">
+    {%- endif -%}
+
+    {% comment %}
+      Fonts are self-hosted in assets/. No request ever leaves for Google Fonts.
+      Only the Hebrew subsets are preloaded — the Latin ones are for the odd
+      brand name and can arrive late without a visible reflow.
+    {% endcomment %}
+    {{ 'assistant-var-hebrew.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+    {{ 'suez-one-400-hebrew.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+
+    {{ 'pawly.css' | asset_url | stylesheet_tag }}
+
+    {% comment %} Every colour comes from the Theme Editor. Nothing is hardcoded. {% endcomment %}
+    {% style %}
+      :root {
+        --pawly-clay: {{ settings.color_clay }};
+        --pawly-cream: {{ settings.color_cream }};
+        --pawly-ink: {{ settings.color_ink }};
+        --pawly-action: {{ settings.color_action }};
+        --pawly-sky: {{ settings.color_sky }};
+        --pawly-sand: {{ settings.color_sand }};
+        --pawly-on-dark: {{ settings.color_on_dark }};
+        --type-base: {{ settings.type_base_size }}px;
+        --type-scale: {{ settings.type_display_scale | divided_by: 100.0 }};
+        --logo-w: {{ settings.logo_width }}px;
+        --card-ratio: {% if settings.card_image_ratio == 'portrait' %}4 / 5{% else %}1{% endif %};
+        --watermark-opacity: {{ settings.card_watermark_opacity | divided_by: 100.0 }};
+        {%- if settings.logo_mark != blank %}
+          --watermark-src: url({{ settings.logo_mark | image_url: width: 120 }});
+        {%- endif %}
+      }
+      @media (max-width: 899px) {
+        :root { --logo-w: {{ settings.logo_width_mobile }}px; }
+      }
+    {% endstyle %}
+
+    <script>
+      // Set before any stylesheet paints so there is no flash of the JS-off state.
+      document.documentElement.classList.remove('no-js');
+    </script>
+
+    {{ content_for_header }}
+  </head>
+
+  <body class="template-{{ request.page_type | handle }}">
+    <a class="skip-link" href="#main">{{ 'general.accessibility.skip_to_content' | t }}</a>
+
+    <div class="pawly-page">
+      {% section 'announcement-bar' %}
+      {% section 'header' %}
+
+      <main id="main" role="main">
+        {{ content_for_layout }}
+      </main>
+
+      {% section 'footer' %}
+    </div>
+
+    {%- if settings.cart_drawer_enable -%}
+      <div class="cart-overlay" data-cart-overlay></div>
+      {% section 'cart-drawer' %}
+    {%- endif -%}
+
+    <script>
+      window.PawlyConfig = {
+        routes: {
+          root: {{ routes.root_url | json }},
+          cart: {{ routes.cart_url | json }},
+          cartAdd: {{ routes.cart_add_url | json }},
+          cartChange: {{ routes.cart_change_url | json }},
+          search: {{ routes.search_url | json }},
+          predictiveSearch: {{ routes.predictive_search_url | json }}
+        },
+        currency: {{ cart.currency.iso_code | json }},
+        cartDrawerEnabled: {{ settings.cart_drawer_enable | json }},
+        motionEnabled: {{ settings.motion_enable | json }},
+        tiltEnabled: {{ settings.motion_tilt | json }},
+        strings: {
+          adding: {{ 'products.product.adding' | t | json }},
+          added: {{ 'products.product.added' | t | json }},
+          soldOut: {{ 'products.product.sold_out' | t | json }},
+          unavailable: {{ 'products.product.unavailable_variant' | t | json }},
+          addToCart: {{ 'products.product.add_to_cart' | t | json }},
+          cartError: {{ 'cart.general.error' | t | json }}
+        }
+      };
+    </script>
+
+    {%- if settings.motion_enable -%}
+      {% comment %}
+        GSAP is self-hosted. There is no third-party <script src> in this theme —
+        a CDN that 404s is one of the five ways the previous builds died.
+      {% endcomment %}
+      <script src="{{ 'gsap.min.js' | asset_url }}" defer></script>
+      <script src="{{ 'ScrollTrigger.min.js' | asset_url }}" defer></script>
+    {%- endif -%}
+
+    <script src="{{ 'pawly.js' | asset_url }}" defer></script>
+
+    <div id="pawly-live-region" class="visually-hidden" role="status" aria-live="polite"></div>
+  </body>
+</html>

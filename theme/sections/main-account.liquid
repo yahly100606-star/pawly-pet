@@ -1,0 +1,86 @@
+<div class="pawly-container pawly-section">
+  <div class="page-head">
+    <h1>{{ 'customer.account.title' | t }}</h1>
+  </div>
+
+  <div class="account__grid">
+    <div>
+      <h2 style="font-size: var(--step-2)">{{ 'customer.orders.title' | t }}</h2>
+
+      {%- paginate customer.orders by 12 -%}
+        {%- if customer.orders.size == 0 -%}
+          <div class="card-panel">
+            <p style="margin: 0">{{ 'customer.orders.none' | t }}</p>
+          </div>
+        {%- else -%}
+          <div class="card-panel" style="overflow-x: auto">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th scope="col">{{ 'customer.orders.order_number' | t }}</th>
+                  <th scope="col">{{ 'customer.orders.date' | t }}</th>
+                  <th scope="col">{{ 'customer.orders.payment_status' | t }}</th>
+                  <th scope="col">{{ 'customer.orders.fulfillment_status' | t }}</th>
+                  <th scope="col">{{ 'customer.orders.total' | t }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%- for order in customer.orders -%}
+                  {%- assign order_date = order.created_at | date: '%d.%m.%Y' -%}
+                  <tr>
+                    <td><a href="{{ order.customer_url }}">{{ order.name }}</a></td>
+                    <td>{{ order_date }}</td>
+                    <td>{{ order.financial_status_label }}</td>
+                    <td>{{ order.fulfillment_status_label }}</td>
+                    <td>{{ order.total_price | money }}</td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+          </div>
+
+          {%- if paginate.pages > 1 -%}
+            <nav class="pagination" aria-label="{{ 'general.pagination.label' | t }}">
+              {%- for part in paginate.parts -%}
+                {%- if part.is_link -%}
+                  <a href="{{ part.url }}">{{ part.title }}</a>
+                {%- else -%}
+                  <span {% if part.title == paginate.current_page %}aria-current="page"{% endif %}>
+                    {{- part.title -}}
+                  </span>
+                {%- endif -%}
+              {%- endfor -%}
+            </nav>
+          {%- endif -%}
+        {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+
+    <aside class="card-panel">
+      <h2 style="font-size: var(--step-1)">{{ 'customer.account.details' | t }}</h2>
+      <p style="margin: 0">
+        {{ customer.name }}<br>
+        {{ customer.email }}
+      </p>
+
+      {%- if customer.default_address -%}
+        <p style="margin-top: var(--sp-3)">{{ customer.default_address | format_address }}</p>
+      {%- endif -%}
+
+      <p>
+        <a href="{{ routes.account_addresses_url }}" class="btn btn--outline btn--sm btn--block">
+          {{ 'customer.account.view_addresses' | t }}
+        </a>
+      </p>
+      <p style="margin: 0">
+        <a href="{{ routes.account_logout_url }}" class="btn btn--ghost btn--sm">התנתקות</a>
+      </p>
+    </aside>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "חשבון"
+}
+{% endschema %}

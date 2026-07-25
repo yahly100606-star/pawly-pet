@@ -1,0 +1,85 @@
+{%- assign posted = article.published_at | date: '%d.%m.%Y' -%}
+
+<article class="pawly-container pawly-section">
+  <div class="page-head">
+    <h1>{{ article.title }}</h1>
+    <p class="pawly-card__meta">
+      {{ 'blogs.article.posted_on' | t: date: posted }}
+      {%- if article.author != blank %} · {{ 'blogs.article.by_author' | t: author: article.author }}{% endif -%}
+    </p>
+  </div>
+
+  {%- if article.image -%}
+    <img
+      src="{{ article.image | image_url: width: 1400 }}"
+      alt="{{ article.image.alt | default: article.title | escape }}"
+      width="{{ article.image.width }}"
+      height="{{ article.image.height }}"
+      style="border-radius: var(--radius-lg); margin-bottom: var(--sp-6)"
+      loading="eager"
+      fetchpriority="high"
+    >
+  {%- endif -%}
+
+  <div class="rte narrow">{{ article.content }}</div>
+
+  <p style="margin-top: var(--sp-6)">
+    <a href="{{ blog.url }}" class="btn btn--ghost btn--sm">{{ 'blogs.article.back_to_blog' | t }}</a>
+  </p>
+
+  {%- if blog.comments_enabled? -%}
+    <section class="narrow" style="margin-top: var(--sp-7)">
+      <h2 style="font-size: var(--step-2)">
+        {{ 'blogs.comments.title' | t }}
+        {%- if article.comments_count > 0 %}
+          <span class="pawly-card__meta">
+            ({{ 'blogs.comments.count' | t: count: article.comments_count }})
+          </span>
+        {% endif -%}
+      </h2>
+
+      {%- for comment in article.comments -%}
+        <div class="card-panel" style="margin-bottom: var(--sp-4)">
+          <p>{{ comment.content }}</p>
+          <p class="pawly-card__meta">{{ comment.author }}</p>
+        </div>
+      {%- endfor -%}
+
+      {%- form 'new_comment', article -%}
+        {%- if form.posted_successfully? -%}
+          <p class="form-status form-status--success" role="status">
+            {%- if blog.moderated? -%}
+              {{ 'blogs.comments.moderated' | t }}
+            {%- else -%}
+              {{ 'blogs.comments.success' | t }}
+            {%- endif -%}
+          </p>
+        {%- elsif form.errors -%}
+          <p class="form-status form-status--error" role="alert">
+            {{ form.errors | default_errors }}
+          </p>
+        {%- endif -%}
+
+        <div class="field">
+          <label class="field__label" for="comment-author">{{ 'blogs.comments.name' | t }}</label>
+          <input id="comment-author" class="input" type="text" name="comment[author]" required>
+        </div>
+        <div class="field">
+          <label class="field__label" for="comment-email">{{ 'blogs.comments.email' | t }}</label>
+          <input id="comment-email" class="input" type="email" name="comment[email]" required>
+        </div>
+        <div class="field">
+          <label class="field__label" for="comment-body">{{ 'blogs.comments.message' | t }}</label>
+          <textarea id="comment-body" class="textarea" name="comment[body]" required></textarea>
+        </div>
+        <button type="submit" class="btn btn--clay">{{ 'blogs.comments.post' | t }}</button>
+      {%- endform -%}
+    </section>
+  {%- endif -%}
+</article>
+
+{% schema %}
+{
+  "name": "כתבה"
+}
+{% endschema %}

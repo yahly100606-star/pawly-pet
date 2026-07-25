@@ -1,0 +1,25 @@
+{% comment %}
+  A styled 404 in Hebrew. An unstyled error page is where trust dies.
+{% endcomment %}
+
+<div class="pawly-container pawly-section">
+  <div class="page-head">
+    <span style="display: inline-block; width: 72px; color: var(--pawly-clay); opacity: .5">
+      {% render 'icon-paw' %}
+    </span>
+    <h1>{{ 'general.404.title' | t }}</h1>
+    <p class="narrow">{{ 'general.404.body' | t }}</p>
+    <p style="display: flex; gap: var(--sp-3); justify-content: center; flex-wrap: wrap">
+      <a href="{{ routes.root_url }}" class="btn btn--clay">{{ 'general.404.home' | t }}</a>
+      <a href="{{ routes.all_products_collection_url }}" class="btn btn--outline">
+        {{ 'general.404.shop' | t }}
+      </a>
+    </p>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "404"
+}
+{% endschema %}
